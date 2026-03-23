@@ -6,6 +6,8 @@ class ScreenshotManager {
     static let shared = ScreenshotManager()
     
     private var screenshotWindow: RegionSelectorWindow?
+    private var quickPreviewWindow: QuickPreviewWindow?
+    private var lastScreenshotURL: URL?
     
     private init() {}
     
@@ -16,7 +18,7 @@ class ScreenshotManager {
         NSApp.keyWindow?.close()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.showRegionSelector(mode: .region)
+            self.showRegionSelector()
         }
     }
     
@@ -56,7 +58,7 @@ class ScreenshotManager {
                     [.bestResolution, .boundsIgnoreFraming]
                 ) {
                     await MainActor.run {
-                        self.saveScreenshot(image)
+                        self.handleScreenshot(image)
                     }
                 }
             } catch {
@@ -67,7 +69,7 @@ class ScreenshotManager {
     
     // MARK: - Private Methods
     
-    private func showRegionSelector(mode: ScreenshotMode) {
+    private func showRegionSelector() {
         screenshotWindow = RegionSelectorWindow()
         screenshotWindow?.makeKeyAndOrderFront(nil)
     }
@@ -77,19 +79,46 @@ class ScreenshotManager {
         picker.makeKeyAndOrderFront(nil)
     }
     
-    private func saveScreenshot(_ image: CGImage) {
-        let savePanel = NSSavePanel()
-        savePanel.allowedContentTypes = [.png, .jpeg]
-        savePanel.nameFieldStringValue = "FreeShot-\(dateString()).png"
+    private func handleScreenshot(_ image: CGImage) {
+        // 保存到临时文件
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FreeShot-\(dateString()).png")
         
-        savePanel.begin { response in
-            if response == .OK, let url = savePanel.url {
-                let bitmapRep = NSBitmapImageRep(cgImage: image)
-                if let data = bitmapRep.representation(using: .png, properties: [:]) {
-                    try? data.write(to: url)
-                }
-            }
+        let bitmapRep = NSBitmapImageRep(cgImage: image)
+        if let data = bitmapRep.representation(using: .png, properties: [:]) {
+            try? data.write(to: tempURL)
+            lastScreenshotURL = tempURL
+            
+            // 显示快速预览浮窗
+            showQuickPreview(image: image, url: tempURL)
+            
+            // 同时保存到历史
+            saveToHistory(url: tempURL)
         }
+    }
+    
+    private func showQuickPreview(image: CGImage, url: URL) {
+        quickPreviewWindow = QuickPreviewWindow(image: image, url: url)
+        quickPreviewWindow?.makeKeyAndOrderFront(nil)
+    }
+    
+    private func saveToHistory(url: URL) {
+        var history = ScreenshotHistory.shared.history
+        history.insert(url, at: 0)
+        
+        // 只保留最近30天，最多100个
+        let thirtyDaysAgo = Date().addingTimeInterval(-30 * 24 * 60 * 60)
+        history = history.filter { url in
+            let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
+            let creationDate = attributes?[.creationDate] as? Date ?? Date()
+            return creationDate > thirtyDaysAgo
+        }
+        
+        if history.count > 100 {
+            history = Array(history.prefix(100))
+        }
+        
+        ScreenshotHistory.shared.history = history
     }
     
     private func dateString() -> String {
@@ -97,10 +126,4 @@ class ScreenshotManager {
         formatter.dateFormat = "yyyy-MM-dd-HHmmss"
         return formatter.string(from: Date())
     }
-}
-
-enum ScreenshotMode {
-    case region
-    case window
-    case fullScreen
 }
