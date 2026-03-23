@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1A3A8172B47C84EC0D1BDA03 /* RegionSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E58DFBBFA6D908A2B794AFA /* RegionSelector.swift */; };
 		25C2F0FE6579F54327F9C239 /* CountdownWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83503FDC90272292933CBB16 /* CountdownWindow.swift */; };
+		2C9EE2C0132B83BCFA8AF3AB /* GifExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7169BEF27EAF19A82CA03F76 /* GifExporter.swift */; };
 		42EDE48B5350756D1A958B3E /* KeystrokeOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C472E597BE506C028B1DBA0 /* KeystrokeOverlay.swift */; };
 		5977BA006940DA27316A2B95 /* RecordingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603C6A29FEA3739A4580346B /* RecordingIndicator.swift */; };
 		935850F86DCFB7E4AA58D2EA /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C5A43E0E276A64B123D1EC /* PopoverView.swift */; };
@@ -17,6 +18,7 @@
 		C07B4DF3B133E1C31F0E8FA7 /* ScreenCamProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EBCBACEF519CAF5426B960 /* ScreenCamProApp.swift */; };
 		C7306432F5A986277B40966B /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741369DEC58A4E7C3CEE0E6 /* HotkeyManager.swift */; };
 		E6CDB98853741E624E92C2F8 /* RecordingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C5CEAB0CF3B9FF75D7789D5 /* RecordingState.swift */; };
+		EAF1E54443CBA44E855B97BE /* VideoTrimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76192744BDD9B52847D21D12 /* VideoTrimmer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +28,9 @@
 		5C472E597BE506C028B1DBA0 /* KeystrokeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystrokeOverlay.swift; sourceTree = "<group>"; };
 		603C6A29FEA3739A4580346B /* RecordingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIndicator.swift; sourceTree = "<group>"; };
 		6329A258AC9BF9AAB9C349F4 /* FreeShot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeShot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7169BEF27EAF19A82CA03F76 /* GifExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifExporter.swift; sourceTree = "<group>"; };
 		71EBCBACEF519CAF5426B960 /* ScreenCamProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCamProApp.swift; sourceTree = "<group>"; };
+		76192744BDD9B52847D21D12 /* VideoTrimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTrimmer.swift; sourceTree = "<group>"; };
 		83503FDC90272292933CBB16 /* CountdownWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownWindow.swift; sourceTree = "<group>"; };
 		9E58DFBBFA6D908A2B794AFA /* RegionSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSelector.swift; sourceTree = "<group>"; };
 		C741369DEC58A4E7C3CEE0E6 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
@@ -39,9 +43,11 @@
 			children = (
 				EB4FA083F803589383CCFF33 /* CameraPreviewWindow.swift */,
 				83503FDC90272292933CBB16 /* CountdownWindow.swift */,
+				7169BEF27EAF19A82CA03F76 /* GifExporter.swift */,
 				5C472E597BE506C028B1DBA0 /* KeystrokeOverlay.swift */,
 				603C6A29FEA3739A4580346B /* RecordingIndicator.swift */,
 				9E58DFBBFA6D908A2B794AFA /* RegionSelector.swift */,
+				76192744BDD9B52847D21D12 /* VideoTrimmer.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -151,6 +157,7 @@
 			files = (
 				C07ADC330F66F1B6135D384D /* CameraPreviewWindow.swift in Sources */,
 				25C2F0FE6579F54327F9C239 /* CountdownWindow.swift in Sources */,
+				2C9EE2C0132B83BCFA8AF3AB /* GifExporter.swift in Sources */,
 				C7306432F5A986277B40966B /* HotkeyManager.swift in Sources */,
 				42EDE48B5350756D1A958B3E /* KeystrokeOverlay.swift in Sources */,
 				935850F86DCFB7E4AA58D2EA /* PopoverView.swift in Sources */,
@@ -159,6 +166,7 @@
 				E6CDB98853741E624E92C2F8 /* RecordingState.swift in Sources */,
 				1A3A8172B47C84EC0D1BDA03 /* RegionSelector.swift in Sources */,
 				C07B4DF3B133E1C31F0E8FA7 /* ScreenCamProApp.swift in Sources */,
+				EAF1E54443CBA44E855B97BE /* VideoTrimmer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

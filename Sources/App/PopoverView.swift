@@ -227,13 +227,34 @@ struct PopoverView: View {
             
             // 底部
             HStack {
+                Button("GIF导出") {
+                    GifExporter.shared.convertVideoToGif { url in
+                        if url != nil {
+                            // 成功
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+                .font(.caption)
+                
+                Button("视频裁剪") {
+                    VideoTrimmer.shared.trimSelectedVideo { url in
+                        // 成功
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+                .font(.caption)
+                
+                Spacer()
+                
                 Button("设置") {
                     // TODO: 打开设置
                 }
                 .buttonStyle(.plain)
                 .foregroundColor(.secondary)
                 
-                Spacer()
             }
             .font(.caption)
         }
