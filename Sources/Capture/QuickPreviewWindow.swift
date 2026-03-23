@@ -71,12 +71,17 @@ class QuickPreviewWindow: NSWindow {
         saveButton.target = self
         saveButton.action = #selector(saveImage)
         
+        let annotateButton = createButton(title: "标注", icon: "pencil")
+        annotateButton.target = self
+        annotateButton.action = #selector(openAnnotate)
+        
         let openButton = createButton(title: "打开", icon: "folder")
         openButton.target = self
         openButton.action = #selector(openInFinder)
         
         buttonStack.addArrangedSubview(copyButton)
         buttonStack.addArrangedSubview(saveButton)
+        buttonStack.addArrangedSubview(annotateButton)
         buttonStack.addArrangedSubview(openButton)
         
         container.addSubview(imageView)
@@ -129,5 +134,37 @@ class QuickPreviewWindow: NSWindow {
     @objc private func openInFinder() {
         NSWorkspace.shared.activateFileViewerSelecting([screenshotURL])
         close()
+    }
+    
+    @objc private func openAnnotate() {
+        close()
+        
+        if let image = NSImage(contentsOf: screenshotURL) {
+            let annotationWindow = AnnotationWindow(image: image)
+            annotationWindow.onSave = { [weak self] annotatedImage in
+                self?.saveAnnotatedImage(annotatedImage)
+            }
+            annotationWindow.makeKeyAndOrderFront(nil)
+        }
+    }
+    
+    private func saveAnnotatedImage(_ image: NSImage) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd-HHmmss"
+        let dateStr = formatter.string(from: Date())
+        
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.png]
+        savePanel.nameFieldStringValue = "FreeShot-annotated-\(dateStr).png"
+        
+        savePanel.begin { response in
+            if response == .OK, let url = savePanel.url {
+                if let tiffData = image.tiffRepresentation,
+                   let bitmap = NSBitmapImageRep(data: tiffData),
+                   let pngData = bitmap.representation(using: .png, properties: [:]) {
+                    try? pngData.write(to: url)
+                }
+            }
+        }
     }
 }
