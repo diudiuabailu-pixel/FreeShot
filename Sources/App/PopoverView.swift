@@ -2,11 +2,156 @@ import SwiftUI
 
 struct PopoverView: View {
     @StateObject private var recordingState = RecordingState.shared
+    @State private var selectedTab: Tab = .screenshot
+    
+    enum Tab: String, CaseIterable {
+        case screenshot = "截图"
+        case recording = "录屏"
+    }
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            // 标题
+            HStack {
+                Image(systemName: "video.fill")
+                    .font(.title3)
+                Text("FreeShot")
+                    .font(.headline)
+                Text("- 免费工具")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+            
+            // Tab 切换
+            Picker("", selection: $selectedTab) {
+                ForEach(Tab.allCases, id: \.self) { tab in
+                    Text(tab.rawValue).tag(tab)
+                }
+            }
+            .pickerStyle(.segmented)
+            
+            Divider()
+            
+            // 根据 Tab 显示内容
+            if selectedTab == .screenshot {
+                ScreenshotView()
+            } else {
+                RecordingView()
+            }
+            
+            Spacer()
+            
+            // 底部
+            HStack {
+                Button("GIF导出") {
+                    GifExporter.shared.convertVideoToGif { _ in }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+                .font(.caption)
+                
+                Button("视频裁剪") {
+                    VideoTrimmer.shared.trimSelectedVideo { _ in }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+                .font(.caption)
+                
+                Spacer()
+            }
+        }
+        .padding()
+        .frame(width: 300, height: 420)
+    }
+}
+
+// MARK: - Screenshot View
+
+struct ScreenshotView: View {
+    @State private var showCameraInScreenshot = false
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            // 截图选项
+            Toggle(isOn: $showCameraInScreenshot) {
+                HStack {
+                    Image(systemName: "camera.fill")
+                    Text("同时录制摄像头")
+                }
+            }
+            .toggleStyle(.switch)
+            
+            Divider()
+            
+            // 截图按钮
+            VStack(spacing: 10) {
+                Button(action: {
+                    ScreenshotManager.shared.captureRegion()
+                }) {
+                    HStack {
+                        Image(systemName: "rectangle.dashed")
+                        Text("截取区域")
+                        Spacer()
+                        Text("⌘+Shift+4")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                
+                Button(action: {
+                    ScreenshotManager.shared.captureWindow()
+                }) {
+                    HStack {
+                        Image(systemName: "macwindow")
+                        Text("截取窗口")
+                        Spacer()
+                        Text("⌘+Shift+5")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                
+                Button(action: {
+                    ScreenshotManager.shared.captureFullScreen()
+                }) {
+                    HStack {
+                        Image(systemName: "rectangle.fill")
+                        Text("截取全屏")
+                        Spacer()
+                        Text("⌘+Shift+6")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
+// MARK: - Recording View
+
+struct RecordingView: View {
+    @StateObject private var recordingState = RecordingState.shared
     @State private var showCameraPreview = true
     @State private var cameraPosition: CameraPositionOption = .bottomRight
     @State private var cameraSize: CameraSizeOption = .medium
-    @State private var showCountdown = true
-    @State private var countdownSeconds = 3
+    @State private var countdownOption: CountdownOption = .three
     @State private var showMouseClicks = true
     @State private var showKeystrokes = false
     
@@ -56,134 +201,106 @@ struct PopoverView: View {
         }
     }
     
-    @State private var countdownOption: CountdownOption = .three
-    
     var body: some View {
-        VStack(spacing: 16) {
-            // 标题
-            HStack {
-                Image(systemName: "video.fill")
-                    .font(.title3)
-                Text("FreeShot")
-                    .font(.headline)
-                Text("- 免费录屏")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Spacer()
-            }
-            
-            Divider()
-            
-            // 录制状态
+        VStack(spacing: 12) {
             if recordingState.isRecording {
                 RecordingStatusView()
             } else {
-                // 录制选项
-                VStack(spacing: 12) {
-                    // 摄像头开关
-                    Toggle(isOn: $showCameraPreview) {
-                        HStack {
-                            Image(systemName: "camera.fill")
-                            Text("显示摄像头")
-                        }
+                // 摄像头开关
+                Toggle(isOn: $showCameraPreview) {
+                    HStack {
+                        Image(systemName: "camera.fill")
+                        Text("显示摄像头")
                     }
-                    .toggleStyle(.switch)
-                    
-                    // 摄像头位置（仅在开启摄像头时显示）
-                    if showCameraPreview {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("摄像头位置")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Picker("位置", selection: $cameraPosition) {
-                                ForEach(CameraPositionOption.allCases, id: \.self) { option in
-                                    Text(option.rawValue).tag(option)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-                            .onChange(of: cameraPosition) { newValue in
-                                RecordingManager.shared.updateCameraPosition(newValue.recordingPosition)
-                            }
-                        }
-                        
-                        // 摄像头大小
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("摄像头大小")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Picker("大小", selection: $cameraSize) {
-                                ForEach(CameraSizeOption.allCases, id: \.self) { option in
-                                    Text(option.rawValue).tag(option)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-                            .onChange(of: cameraSize) { newValue in
-                                RecordingManager.shared.cameraSize = newValue.size
-                            }
-                        }
-                    }
-                    
-                    Divider()
-                    
-                    // 录屏选项
-                    Text("录屏选项")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    // 倒计时
+                }
+                .toggleStyle(.switch)
+                
+                // 摄像头位置
+                if showCameraPreview {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("倒计时")
+                        Text("摄像头位置")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Picker("倒计时", selection: $countdownOption) {
-                            ForEach(CountdownOption.allCases, id: \.self) { option in
-                                Text(option.rawValue).tag(option)
+                        Picker("", selection: $cameraPosition) {
+                            ForEach(CameraPositionOption.allCases, id: \.self) { option in
+                                Text(option.rawValue)
                             }
                         }
                         .pickerStyle(.segmented)
-                    }
-                    
-                    // 鼠标点击
-                    Toggle(isOn: $showMouseClicks) {
-                        HStack {
-                            Image(systemName: "cursorarrow.click")
-                            Text("显示鼠标点击")
+                        .onChange(of: cameraPosition) { newValue in
+                            RecordingManager.shared.updateCameraPosition(newValue.recordingPosition)
                         }
                     }
-                    .toggleStyle(.switch)
                     
-                    // 键盘按键
-                    Toggle(isOn: $showKeystrokes) {
-                        HStack {
-                            Image(systemName: "keyboard")
-                            Text("显示键盘按键")
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("摄像头大小")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Picker("", selection: $cameraSize) {
+                            ForEach(CameraSizeOption.allCases, id: \.self) { option in
+                                Text(option.rawValue)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .onChange(of: cameraSize) { newValue in
+                            RecordingManager.shared.cameraSize = newValue.size
                         }
                     }
-                    .toggleStyle(.switch)
-                    
-                    Divider()
-                    
-                    // 音频选项
-                    Toggle(isOn: .constant(true)) {
-                        HStack {
-                            Image(systemName: "mic.fill")
-                            Text("麦克风")
-                        }
-                    }
-                    .toggleStyle(.switch)
-                    
-                    Toggle(isOn: .constant(true)) {
-                        HStack {
-                            Image(systemName: "speaker.wave.2.fill")
-                            Text("系统声音")
-                        }
-                    }
-                    .toggleStyle(.switch)
                 }
+                
+                Divider()
+                
+                // 倒计时
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("倒计时")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Picker("", selection: $countdownOption) {
+                        ForEach(CountdownOption.allCases, id: \.self) { option in
+                            Text(option.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                // 鼠标/键盘
+                Toggle(isOn: $showMouseClicks) {
+                    HStack {
+                        Image(systemName: "cursorarrow.click")
+                        Text("显示鼠标点击")
+                    }
+                }
+                .toggleStyle(.switch)
+                
+                Toggle(isOn: $showKeystrokes) {
+                    HStack {
+                        Image(systemName: "keyboard")
+                        Text("显示键盘按键")
+                    }
+                }
+                .toggleStyle(.switch)
+                
+                Divider()
+                
+                // 音频
+                Toggle(isOn: .constant(true)) {
+                    HStack {
+                        Image(systemName: "mic.fill")
+                        Text("麦克风")
+                    }
+                }
+                .toggleStyle(.switch)
+                
+                Toggle(isOn: .constant(true)) {
+                    HStack {
+                        Image(systemName: "speaker.wave.2.fill")
+                        Text("系统声音")
+                    }
+                }
+                .toggleStyle(.switch)
                 
                 Divider()
                 
@@ -200,7 +317,7 @@ struct PopoverView: View {
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(Color.blue.opacity(0.1))
+                        .background(Color.red.opacity(0.1))
                         .cornerRadius(8)
                     }
                     .buttonStyle(.plain)
@@ -216,50 +333,13 @@ struct PopoverView: View {
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(Color.blue.opacity(0.1))
+                        .background(Color.red.opacity(0.1))
                         .cornerRadius(8)
                     }
                     .buttonStyle(.plain)
                 }
             }
-            
-            Spacer()
-            
-            // 底部
-            HStack {
-                Button("GIF导出") {
-                    GifExporter.shared.convertVideoToGif { url in
-                        if url != nil {
-                            // 成功
-                        }
-                    }
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(.secondary)
-                .font(.caption)
-                
-                Button("视频裁剪") {
-                    VideoTrimmer.shared.trimSelectedVideo { url in
-                        // 成功
-                    }
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(.secondary)
-                .font(.caption)
-                
-                Spacer()
-                
-                Button("设置") {
-                    // TODO: 打开设置
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(.secondary)
-                
-            }
-            .font(.caption)
         }
-        .padding()
-        .frame(width: 280, height: 520)
     }
     
     private func updateSettings() {
@@ -296,7 +376,6 @@ struct RecordingStatusView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            // 录制指示器
             HStack {
                 Circle()
                     .fill(Color.red)
@@ -314,7 +393,6 @@ struct RecordingStatusView: View {
                 Spacer()
             }
             
-            // 控制按钮
             HStack(spacing: 16) {
                 Button(action: {
                     if state.isPaused {
@@ -338,7 +416,6 @@ struct RecordingStatusView: View {
                 .buttonStyle(.plain)
             }
             
-            // 状态信息
             if state.includeCamera {
                 HStack {
                     Image(systemName: "camera.fill")
