@@ -75,6 +75,10 @@ class QuickPreviewWindow: NSWindow {
         annotateButton.target = self
         annotateButton.action = #selector(openAnnotate)
         
+        let ocrButton = createButton(title: "OCR", icon: "text.viewfinder")
+        ocrButton.target = self
+        ocrButton.action = #selector(recognizeText)
+        
         let openButton = createButton(title: "打开", icon: "folder")
         openButton.target = self
         openButton.action = #selector(openInFinder)
@@ -82,6 +86,7 @@ class QuickPreviewWindow: NSWindow {
         buttonStack.addArrangedSubview(copyButton)
         buttonStack.addArrangedSubview(saveButton)
         buttonStack.addArrangedSubview(annotateButton)
+        buttonStack.addArrangedSubview(ocrButton)
         buttonStack.addArrangedSubview(openButton)
         
         container.addSubview(imageView)
@@ -146,6 +151,33 @@ class QuickPreviewWindow: NSWindow {
             }
             annotationWindow.makeKeyAndOrderFront(nil)
         }
+    }
+    
+    @objc private func recognizeText() {
+        // 识别文字
+        OCRManager.shared.recognizeText(from: screenshotURL) { [weak self] (result: Result<String, Error>) in
+            switch result {
+            case .success(let text):
+                // 复制到剪贴板
+                let pasteboard = NSPasteboard.general
+                pasteboard.clearContents()
+                pasteboard.setString(text, forType: .string)
+                
+                // 显示结果
+                self?.showMessage("文字已复制到剪贴板")
+            case .failure(let error):
+                self?.showMessage("识别失败: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func showMessage(_ message: String) {
+        let alert = NSAlert()
+        alert.messageText = "OCR 识别"
+        alert.informativeText = message
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "确定")
+        alert.runModal()
     }
     
     private func saveAnnotatedImage(_ image: NSImage) {
