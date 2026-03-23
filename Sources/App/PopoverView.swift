@@ -152,6 +152,25 @@ struct ScreenshotTabView: View {
                 ScreenshotManager.shared.captureFullScreen()
             }
             
+            CaptureButton(
+                icon: "arrow.up.and.down",
+                title: "Scroll Capture",
+                shortcut: "",
+                color: .orange
+            ) {
+                AutoScrollCaptureManager.shared.startCapture()
+            }
+            
+            CaptureButton(
+                icon: "display",
+                title: "Multi-Display",
+                shortcut: "",
+                color: .purple
+            ) {
+                let picker = DisplayPickerWindow()
+                picker.makeKeyAndOrderFront(nil)
+            }
+            
             Divider()
                 .padding(.vertical, 8)
             
