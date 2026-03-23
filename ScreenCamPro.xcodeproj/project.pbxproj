@@ -1,0 +1,331 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1FB7650E04AB5942F1B44B4A /* RegionSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9B7A9051D9D52698EE5F80 /* RegionSelector.swift */; };
+		608C18C15D5ABA87F841D42B /* RecordingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5718535383132592C1385C /* RecordingIndicator.swift */; };
+		6F986E1D4C4EC846DA059DA8 /* RecordingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91A969565FC136E8CB69E51 /* RecordingState.swift */; };
+		BCF429F3D6A61E507DDC8C8C /* ScreenCamProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79F9F46CC0531C66C322AD3 /* ScreenCamProApp.swift */; };
+		E02FBFA29E53A2957C544928 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7B4680E5FB83053D1116A1 /* PopoverView.swift */; };
+		F19400F19F327D37AA588AA2 /* RecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6FB058AD79DF1DCC852B522 /* RecordingManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0F7B4680E5FB83053D1116A1 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		7A5718535383132592C1385C /* RecordingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIndicator.swift; sourceTree = "<group>"; };
+		9F9B7A9051D9D52698EE5F80 /* RegionSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSelector.swift; sourceTree = "<group>"; };
+		A3C5DB78D5A443301F564343 /* ScreenCamPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScreenCamPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6FB058AD79DF1DCC852B522 /* RecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
+		E91A969565FC136E8CB69E51 /* RecordingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingState.swift; sourceTree = "<group>"; };
+		F79F9F46CC0531C66C322AD3 /* ScreenCamProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCamProApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0238E9F3CEDBACA7AF36A44C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7A5718535383132592C1385C /* RecordingIndicator.swift */,
+				9F9B7A9051D9D52698EE5F80 /* RegionSelector.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2E8EDF34E89926948B664679 /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				A6FB058AD79DF1DCC852B522 /* RecordingManager.swift */,
+				E91A969565FC136E8CB69E51 /* RecordingState.swift */,
+			);
+			path = Recording;
+			sourceTree = "<group>";
+		};
+		3BD54577B6D4EA949ED8F052 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				0F7B4680E5FB83053D1116A1 /* PopoverView.swift */,
+				F79F9F46CC0531C66C322AD3 /* ScreenCamProApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		8FB01D6750EFE7F83E74A6C9 = {
+			isa = PBXGroup;
+			children = (
+				A71682F9377C91E0736B2E36 /* Sources */,
+				C2829348E8BA7CFF54BD79F3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A71682F9377C91E0736B2E36 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				3BD54577B6D4EA949ED8F052 /* App */,
+				2E8EDF34E89926948B664679 /* Recording */,
+				0238E9F3CEDBACA7AF36A44C /* Views */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		C2829348E8BA7CFF54BD79F3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A3C5DB78D5A443301F564343 /* ScreenCamPro.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		46FB82F3F409C291CB30C866 /* ScreenCamPro */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0083D897881A28E75399CE0C /* Build configuration list for PBXNativeTarget "ScreenCamPro" */;
+			buildPhases = (
+				90352EE95FC5B670CC9CBEBE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ScreenCamPro;
+			packageProductDependencies = (
+			);
+			productName = ScreenCamPro;
+			productReference = A3C5DB78D5A443301F564343 /* ScreenCamPro.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B28FDA69E2386EEBB4E41364 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					46FB82F3F409C291CB30C866 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 98925BB2CC8FD4CCF30B3D67 /* Build configuration list for PBXProject "ScreenCamPro" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8FB01D6750EFE7F83E74A6C9;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C2829348E8BA7CFF54BD79F3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				46FB82F3F409C291CB30C866 /* ScreenCamPro */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		90352EE95FC5B670CC9CBEBE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E02FBFA29E53A2957C544928 /* PopoverView.swift in Sources */,
+				608C18C15D5ABA87F841D42B /* RecordingIndicator.swift in Sources */,
+				F19400F19F327D37AA588AA2 /* RecordingManager.swift in Sources */,
+				6F986E1D4C4EC846DA059DA8 /* RecordingState.swift in Sources */,
+				1FB7650E04AB5942F1B44B4A /* RegionSelector.swift in Sources */,
+				BCF429F3D6A61E507DDC8C8C /* ScreenCamProApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1650239DD8459FE8180EA268 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		53A0017E9B6B6769C1A6F890 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/ScreenCamPro.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.openclaw.screencampro;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CAA3FAC019F04D7BD8D4940C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		D39110ECD123AF5091BDD5B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/ScreenCamPro.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.openclaw.screencampro;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0083D897881A28E75399CE0C /* Build configuration list for PBXNativeTarget "ScreenCamPro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53A0017E9B6B6769C1A6F890 /* Debug */,
+				D39110ECD123AF5091BDD5B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		98925BB2CC8FD4CCF30B3D67 /* Build configuration list for PBXProject "ScreenCamPro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAA3FAC019F04D7BD8D4940C /* Debug */,
+				1650239DD8459FE8180EA268 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B28FDA69E2386EEBB4E41364 /* Project object */;
+}

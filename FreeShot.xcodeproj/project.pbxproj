@@ -1,0 +1,347 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1A3A8172B47C84EC0D1BDA03 /* RegionSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E58DFBBFA6D908A2B794AFA /* RegionSelector.swift */; };
+		25C2F0FE6579F54327F9C239 /* CountdownWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83503FDC90272292933CBB16 /* CountdownWindow.swift */; };
+		42EDE48B5350756D1A958B3E /* KeystrokeOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C472E597BE506C028B1DBA0 /* KeystrokeOverlay.swift */; };
+		5977BA006940DA27316A2B95 /* RecordingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603C6A29FEA3739A4580346B /* RecordingIndicator.swift */; };
+		935850F86DCFB7E4AA58D2EA /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C5A43E0E276A64B123D1EC /* PopoverView.swift */; };
+		A2335E9D32BB62AFB8A9476B /* RecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB76868BF37B6ABB03C4676 /* RecordingManager.swift */; };
+		C07ADC330F66F1B6135D384D /* CameraPreviewWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FA083F803589383CCFF33 /* CameraPreviewWindow.swift */; };
+		C07B4DF3B133E1C31F0E8FA7 /* ScreenCamProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EBCBACEF519CAF5426B960 /* ScreenCamProApp.swift */; };
+		C7306432F5A986277B40966B /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741369DEC58A4E7C3CEE0E6 /* HotkeyManager.swift */; };
+		E6CDB98853741E624E92C2F8 /* RecordingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C5CEAB0CF3B9FF75D7789D5 /* RecordingState.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1C5CEAB0CF3B9FF75D7789D5 /* RecordingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingState.swift; sourceTree = "<group>"; };
+		42C5A43E0E276A64B123D1EC /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		4CB76868BF37B6ABB03C4676 /* RecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
+		5C472E597BE506C028B1DBA0 /* KeystrokeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystrokeOverlay.swift; sourceTree = "<group>"; };
+		603C6A29FEA3739A4580346B /* RecordingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIndicator.swift; sourceTree = "<group>"; };
+		6329A258AC9BF9AAB9C349F4 /* FreeShot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeShot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		71EBCBACEF519CAF5426B960 /* ScreenCamProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCamProApp.swift; sourceTree = "<group>"; };
+		83503FDC90272292933CBB16 /* CountdownWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownWindow.swift; sourceTree = "<group>"; };
+		9E58DFBBFA6D908A2B794AFA /* RegionSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSelector.swift; sourceTree = "<group>"; };
+		C741369DEC58A4E7C3CEE0E6 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		EB4FA083F803589383CCFF33 /* CameraPreviewWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewWindow.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		37449AC0DD25BA3D4B806BEB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EB4FA083F803589383CCFF33 /* CameraPreviewWindow.swift */,
+				83503FDC90272292933CBB16 /* CountdownWindow.swift */,
+				5C472E597BE506C028B1DBA0 /* KeystrokeOverlay.swift */,
+				603C6A29FEA3739A4580346B /* RecordingIndicator.swift */,
+				9E58DFBBFA6D908A2B794AFA /* RegionSelector.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		42291C68BFD61E31D66770DB /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C741369DEC58A4E7C3CEE0E6 /* HotkeyManager.swift */,
+				42C5A43E0E276A64B123D1EC /* PopoverView.swift */,
+				71EBCBACEF519CAF5426B960 /* ScreenCamProApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		52E9F1323B871D8BD24CDBD4 = {
+			isa = PBXGroup;
+			children = (
+				92AD09055C28CCF9772B82D7 /* Sources */,
+				F163FD9E3D851B77FF609762 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		61B53C00E1BFCAA2253B4F68 /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				4CB76868BF37B6ABB03C4676 /* RecordingManager.swift */,
+				1C5CEAB0CF3B9FF75D7789D5 /* RecordingState.swift */,
+			);
+			path = Recording;
+			sourceTree = "<group>";
+		};
+		92AD09055C28CCF9772B82D7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				42291C68BFD61E31D66770DB /* App */,
+				61B53C00E1BFCAA2253B4F68 /* Recording */,
+				37449AC0DD25BA3D4B806BEB /* Views */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		F163FD9E3D851B77FF609762 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6329A258AC9BF9AAB9C349F4 /* FreeShot.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E77FF477DA961B5D265DB8D8 /* FreeShot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 960DB38824AB4D52B2F0702A /* Build configuration list for PBXNativeTarget "FreeShot" */;
+			buildPhases = (
+				2B1A261C1919D6E5E6A3C124 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeShot;
+			packageProductDependencies = (
+			);
+			productName = FreeShot;
+			productReference = 6329A258AC9BF9AAB9C349F4 /* FreeShot.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		47EE8604E87B82903727C5A5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					E77FF477DA961B5D265DB8D8 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 3397706934B1609E9BB737AA /* Build configuration list for PBXProject "FreeShot" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 52E9F1323B871D8BD24CDBD4;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F163FD9E3D851B77FF609762 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E77FF477DA961B5D265DB8D8 /* FreeShot */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2B1A261C1919D6E5E6A3C124 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C07ADC330F66F1B6135D384D /* CameraPreviewWindow.swift in Sources */,
+				25C2F0FE6579F54327F9C239 /* CountdownWindow.swift in Sources */,
+				C7306432F5A986277B40966B /* HotkeyManager.swift in Sources */,
+				42EDE48B5350756D1A958B3E /* KeystrokeOverlay.swift in Sources */,
+				935850F86DCFB7E4AA58D2EA /* PopoverView.swift in Sources */,
+				5977BA006940DA27316A2B95 /* RecordingIndicator.swift in Sources */,
+				A2335E9D32BB62AFB8A9476B /* RecordingManager.swift in Sources */,
+				E6CDB98853741E624E92C2F8 /* RecordingState.swift in Sources */,
+				1A3A8172B47C84EC0D1BDA03 /* RegionSelector.swift in Sources */,
+				C07B4DF3B133E1C31F0E8FA7 /* ScreenCamProApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		51616D30B1425DE9CCC127E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/FreeShot.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.openclaw.freeshot;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		528686F150E489F7ED81EDB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/FreeShot.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.openclaw.freeshot;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		74349814450CF311841FE472 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		D3776E52B31DC6AC2C503DC8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3397706934B1609E9BB737AA /* Build configuration list for PBXProject "FreeShot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3776E52B31DC6AC2C503DC8 /* Debug */,
+				74349814450CF311841FE472 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		960DB38824AB4D52B2F0702A /* Build configuration list for PBXNativeTarget "FreeShot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51616D30B1425DE9CCC127E5 /* Debug */,
+				528686F150E489F7ED81EDB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 47EE8604E87B82903727C5A5 /* Project object */;
+}
