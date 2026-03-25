@@ -2,30 +2,28 @@ import SwiftUI
 
 struct PopoverView: View {
     @State private var selectedTab: Tab = .screenshot
-    
+
     enum Tab: String, CaseIterable {
         case screenshot = "Screenshot"
         case recording = "Recording"
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Logo & Title
             HStack(spacing: 8) {
                 Image(systemName: "viewfinder")
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.blue)
-                
+
                 Text("FreeShot")
                     .font(.system(size: 16, weight: .semibold))
-                
+
                 Spacer()
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
             .padding(.bottom, 12)
-            
-            // Tab Bar
+
             HStack(spacing: 0) {
                 ForEach(Tab.allCases, id: \.self) { tab in
                     TabBarButton(
@@ -39,11 +37,10 @@ struct PopoverView: View {
                 }
             }
             .padding(.horizontal, 12)
-            
+
             Divider()
                 .padding(.top, 12)
-            
-            // Content
+
             ScrollView {
                 VStack(spacing: 12) {
                     if selectedTab == .screenshot {
@@ -54,19 +51,16 @@ struct PopoverView: View {
                 }
                 .padding(16)
             }
-            
+
             Divider()
-            
-            // Bottom Bar
+
             HStack {
                 BottomButton(icon: "clock.arrow.circlepath", title: "History") {
-                    // History
                 }
-                
+
                 Spacer()
-                
+
                 BottomButton(icon: "gearshape", title: "Settings") {
-                    // Settings
                 }
             }
             .padding(.horizontal, 16)
@@ -77,13 +71,11 @@ struct PopoverView: View {
     }
 }
 
-// MARK: - Tab Bar Button
-
 struct TabBarButton: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -98,13 +90,11 @@ struct TabBarButton: View {
     }
 }
 
-// MARK: - Bottom Button
-
 struct BottomButton: View {
     let icon: String
     let title: String
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 4) {
@@ -119,12 +109,9 @@ struct BottomButton: View {
     }
 }
 
-// MARK: - Screenshot Tab
-
 struct ScreenshotTabView: View {
     var body: some View {
         VStack(spacing: 8) {
-            // Capture Buttons
             CaptureButton(
                 icon: "selection.pin.in.out",
                 title: "Capture Region",
@@ -133,7 +120,7 @@ struct ScreenshotTabView: View {
             ) {
                 ScreenshotManager.shared.captureRegion()
             }
-            
+
             CaptureButton(
                 icon: "macwindow",
                 title: "Capture Window",
@@ -142,7 +129,7 @@ struct ScreenshotTabView: View {
             ) {
                 ScreenshotManager.shared.captureWindow()
             }
-            
+
             CaptureButton(
                 icon: "rectangle.fill",
                 title: "Capture Full Screen",
@@ -151,7 +138,7 @@ struct ScreenshotTabView: View {
             ) {
                 ScreenshotManager.shared.captureFullScreen()
             }
-            
+
             CaptureButton(
                 icon: "arrow.up.and.down",
                 title: "Scroll Capture",
@@ -160,7 +147,7 @@ struct ScreenshotTabView: View {
             ) {
                 AutoScrollCaptureManager.shared.startCapture()
             }
-            
+
             CaptureButton(
                 icon: "display",
                 title: "Multi-Display",
@@ -170,11 +157,10 @@ struct ScreenshotTabView: View {
                 let picker = DisplayPickerWindow()
                 picker.makeKeyAndOrderFront(nil)
             }
-            
+
             Divider()
                 .padding(.vertical, 8)
-            
-            // Options
+
             GroupBox {
                 VStack(spacing: 0) {
                     OptionRow(icon: "camera.fill", title: "Include webcam", isOn: .constant(false))
@@ -189,11 +175,9 @@ struct ScreenshotTabView: View {
     }
 }
 
-// MARK: - Recording Tab
-
 struct RecordingTabView: View {
     @StateObject private var state = RecordingState.shared
-    
+
     var body: some View {
         VStack(spacing: 12) {
             if state.isRecording {
@@ -205,21 +189,20 @@ struct RecordingTabView: View {
     }
 }
 
-// MARK: - Recording Options
-
 struct RecordingOptionsView: View {
     @State private var showCamera = true
-    @State private var cameraPosition = 2
+    @State private var cameraPosition = 3
     @State private var cameraSize = 1
     @State private var countdown = 1
     @State private var micEnabled = true
     @State private var systemAudio = true
     @State private var showClicks = true
     @State private var showKeystrokes = false
-    
+
+    private var manager: RecordingManager { RecordingManager.shared }
+
     var body: some View {
         VStack(spacing: 8) {
-            // Camera Section
             GroupBox {
                 VStack(spacing: 0) {
                     Toggle(isOn: $showCamera) {
@@ -228,10 +211,10 @@ struct RecordingOptionsView: View {
                     }
                     .toggleStyle(.switch)
                     .controlSize(.small)
-                    
+
                     if showCamera {
                         Divider()
-                        
+
                         HStack {
                             Text("Position")
                                 .font(.system(size: 12))
@@ -246,9 +229,9 @@ struct RecordingOptionsView: View {
                             .controlSize(.small)
                         }
                         .padding(.top, 4)
-                        
+
                         Divider()
-                        
+
                         HStack {
                             Text("Size")
                                 .font(.system(size: 12))
@@ -268,8 +251,7 @@ struct RecordingOptionsView: View {
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
-            
-            // Timer
+
             GroupBox {
                 HStack {
                     Text("Timer")
@@ -289,8 +271,7 @@ struct RecordingOptionsView: View {
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
-            
-            // Display
+
             GroupBox {
                 VStack(spacing: 0) {
                     Toggle(isOn: $showClicks) {
@@ -299,9 +280,9 @@ struct RecordingOptionsView: View {
                     }
                     .toggleStyle(.switch)
                     .controlSize(.small)
-                    
+
                     Divider()
-                    
+
                     Toggle(isOn: $showKeystrokes) {
                         Label("Show keystrokes", systemImage: "keyboard")
                             .font(.system(size: 13))
@@ -314,8 +295,7 @@ struct RecordingOptionsView: View {
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
-            
-            // Audio
+
             GroupBox {
                 VStack(spacing: 0) {
                     Toggle(isOn: $micEnabled) {
@@ -324,9 +304,9 @@ struct RecordingOptionsView: View {
                     }
                     .toggleStyle(.switch)
                     .controlSize(.small)
-                    
+
                     Divider()
-                    
+
                     Toggle(isOn: $systemAudio) {
                         Label("System Audio", systemImage: "speaker.wave.2.fill")
                             .font(.system(size: 13))
@@ -339,42 +319,117 @@ struct RecordingOptionsView: View {
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
-            
+
             Divider()
                 .padding(.vertical, 4)
-            
-            // Record Buttons
+
+            if micEnabled && !systemAudio {
+                Text("当前版本优先保证系统音频录制稳定，单独麦克风混音仍在完善。")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             HStack(spacing: 8) {
                 RecordButton(title: "Region", icon: "selection.pin.in.out") {
-                    RecordingManager.shared.startRegionRecording(includeCamera: showCamera)
+                    applyRecordingOptions()
+                    manager.startRegionRecording(includeCamera: showCamera)
                 }
-                
+
                 RecordButton(title: "Full Screen", icon: "macwindow") {
-                    RecordingManager.shared.startFullScreenRecording(includeCamera: showCamera)
+                    applyRecordingOptions()
+                    manager.startFullScreenRecording(includeCamera: showCamera)
                 }
             }
         }
+        .onAppear(perform: syncFromManager)
+    }
+
+    private func syncFromManager() {
+        showClicks = manager.showMouseClicks
+        showKeystrokes = manager.showKeystrokes
+        micEnabled = manager.microphoneEnabled
+        systemAudio = manager.systemAudioEnabled
+        countdown = countdownTag(for: manager.countdownSeconds)
+        cameraPosition = cameraPositionTag(for: manager.cameraPosition)
+        cameraSize = cameraSizeTag(for: manager.cameraSize)
+    }
+
+    private func applyRecordingOptions() {
+        manager.showMouseClicks = showClicks
+        manager.showKeystrokes = showKeystrokes
+        manager.microphoneEnabled = micEnabled
+        manager.systemAudioEnabled = systemAudio
+        manager.countdownSeconds = countdownSeconds(for: countdown)
+        manager.updateCameraPosition(cameraPositionValue(for: cameraPosition))
+        manager.updateCameraSize(cameraSizeValue(for: cameraSize))
+    }
+
+    private func countdownSeconds(for tag: Int) -> Int {
+        switch tag {
+        case 1: return 3
+        case 2: return 5
+        case 3: return 10
+        default: return 0
+        }
+    }
+
+    private func countdownTag(for seconds: Int) -> Int {
+        switch seconds {
+        case 3: return 1
+        case 5: return 2
+        case 10: return 3
+        default: return 0
+        }
+    }
+
+    private func cameraPositionValue(for tag: Int) -> RecordingManager.CameraPosition {
+        switch tag {
+        case 0: return .topLeft
+        case 1: return .topRight
+        case 2: return .bottomLeft
+        default: return .bottomRight
+        }
+    }
+
+    private func cameraPositionTag(for value: RecordingManager.CameraPosition) -> Int {
+        switch value {
+        case .topLeft: return 0
+        case .topRight: return 1
+        case .bottomLeft: return 2
+        case .bottomRight: return 3
+        }
+    }
+
+    private func cameraSizeValue(for tag: Int) -> CGSize {
+        switch tag {
+        case 0: return CGSize(width: 160, height: 120)
+        case 2: return CGSize(width: 260, height: 195)
+        default: return CGSize(width: 200, height: 150)
+        }
+    }
+
+    private func cameraSizeTag(for size: CGSize) -> Int {
+        if size.width <= 160 { return 0 }
+        if size.width >= 260 { return 2 }
+        return 1
     }
 }
 
-// MARK: - Recording Active View
-
 struct RecordingActiveView: View {
     @StateObject private var state = RecordingState.shared
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            // Timer
             HStack(spacing: 8) {
                 RecordingDot()
-                
+
                 Text(formatTime(state.recordingDuration))
                     .font(.system(size: 28, weight: .medium, design: .monospaced))
-                
+
                 Spacer()
             }
-            
-            // Controls
+
             HStack(spacing: 16) {
                 Button(action: {
                     if state.isPaused {
@@ -390,7 +445,7 @@ struct RecordingActiveView: View {
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-                
+
                 Button(action: {
                     RecordingManager.shared.stopRecording()
                 }) {
@@ -402,11 +457,10 @@ struct RecordingActiveView: View {
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-                
+
                 Spacer()
             }
-            
-            // Status
+
             if state.includeCamera {
                 HStack {
                     Image(systemName: "camera.fill")
@@ -421,12 +475,12 @@ struct RecordingActiveView: View {
         .background(Color.red.opacity(0.1))
         .cornerRadius(12)
     }
-    
+
     func formatTime(_ seconds: Int) -> String {
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
         let secs = seconds % 60
-        
+
         if hours > 0 {
             return String(format: "%02d:%02d:%02d", hours, minutes, secs)
         } else {
@@ -437,7 +491,7 @@ struct RecordingActiveView: View {
 
 struct RecordingDot: View {
     @State private var isAnimating = false
-    
+
     var body: some View {
         Circle()
             .fill(Color.red)
@@ -456,15 +510,13 @@ struct RecordingDot: View {
     }
 }
 
-// MARK: - Capture Button
-
 struct CaptureButton: View {
     let icon: String
     let title: String
     let shortcut: String
     let color: Color
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
@@ -474,13 +526,13 @@ struct CaptureButton: View {
                     .frame(width: 32, height: 32)
                     .background(color.opacity(0.15))
                     .cornerRadius(8)
-                
+
                 Text(title)
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
+
                 Text(shortcut)
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundColor(.secondary)
@@ -498,13 +550,11 @@ struct CaptureButton: View {
     }
 }
 
-// MARK: - Option Row
-
 struct OptionRow: View {
     let icon: String
     let title: String
     @Binding var isOn: Bool
-    
+
     var body: some View {
         Toggle(isOn: $isOn) {
             Label(title, systemImage: icon)
@@ -515,13 +565,11 @@ struct OptionRow: View {
     }
 }
 
-// MARK: - Record Button
-
 struct RecordButton: View {
     let title: String
     let icon: String
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack {

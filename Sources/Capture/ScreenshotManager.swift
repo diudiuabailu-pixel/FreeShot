@@ -70,7 +70,9 @@ class ScreenshotManager {
     // MARK: - Private Methods
     
     private func showRegionSelector() {
-        screenshotWindow = RegionSelectorWindow()
+        screenshotWindow = RegionSelectorWindow(onSelected: { [weak self] rect in
+            self?.captureRegionImage(in: rect)
+        })
         screenshotWindow?.makeKeyAndOrderFront(nil)
     }
     
@@ -79,6 +81,18 @@ class ScreenshotManager {
         picker.makeKeyAndOrderFront(nil)
     }
     
+    private func captureRegionImage(in rect: CGRect) {
+        let imageRect = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
+        if let image = CGWindowListCreateImage(
+            imageRect,
+            .optionOnScreenOnly,
+            kCGNullWindowID,
+            [.bestResolution, .boundsIgnoreFraming]
+        ) {
+            handleScreenshot(image)
+        }
+    }
+
     private func handleScreenshot(_ image: CGImage) {
         // 保存到临时文件
         let tempURL = FileManager.default.temporaryDirectory
