@@ -26,16 +26,14 @@ class MultiDisplayManager {
         }
     }
     
-    /// 截取指定显示器（使用 CGWindowListCreateImage 作为后备）
+    /// 截取指定显示器
     func captureDisplay(_ displayID: CGDirectDisplayID) -> CGImage? {
-        // 简化实现，使用主屏幕
-        guard let screen = NSScreen.main else { return nil }
-        
+        let bounds = CGDisplayBounds(displayID)
         return CGWindowListCreateImage(
-            screen.frame,
+            bounds,
             .optionOnScreenOnly,
             kCGNullWindowID,
-            [.bestResolution]
+            [.bestResolution, .boundsIgnoreFraming]
         )
     }
     
@@ -47,10 +45,11 @@ class MultiDisplayManager {
             throw NSError(domain: "MultiDisplayManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Display not found"])
         }
         
-        // 调用 RecordingManager 开始录屏
+        let bounds = CGDisplayBounds(display.displayID)
         RecordingManager.shared.startRecordingWithRegion(
-            CGRect(x: 0, y: 0, width: display.width, height: display.height),
-            includeCamera: includeCamera
+            bounds,
+            includeCamera: includeCamera,
+            preferredDisplayID: display.displayID
         )
     }
 }

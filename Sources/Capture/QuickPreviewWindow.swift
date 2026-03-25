@@ -130,6 +130,7 @@ class QuickPreviewWindow: NSWindow {
         
         savePanel.begin { response in
             if response == .OK, let url = savePanel.url {
+                try? FileManager.default.removeItem(at: url)
                 try? FileManager.default.copyItem(at: self.screenshotURL, to: url)
             }
             self.close()
