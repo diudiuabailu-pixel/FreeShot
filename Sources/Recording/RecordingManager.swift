@@ -359,7 +359,10 @@ final class RecordingManager: NSObject {
         config.minimumFrameInterval = CMTime(value: 1, timescale: 60)
         config.queueDepth = 5
         config.showsCursor = true
-        config.capturesAudio = systemAudioEnabled
+        config.capturesAudio = systemAudioEnabled || microphoneEnabled
+        if #available(macOS 14.0, *) {
+            config.captureMicrophone = microphoneEnabled
+        }
         config.sourceRect = sourceRect
 
         let outputURL = FileManager.default.temporaryDirectory
@@ -368,12 +371,19 @@ final class RecordingManager: NSObject {
 
         assetWriter = try AVAssetWriter(outputURL: outputURL, fileType: .mp4)
 
+        let bitRate: Int
+        switch UserDefaults.standard.string(forKey: "videoQuality") ?? "high" {
+        case "low": bitRate = 3_000_000
+        case "medium": bitRate = 6_000_000
+        default: bitRate = 10_000_000
+        }
+
         let videoSettings: [String: Any] = [
             AVVideoCodecKey: AVVideoCodecType.h264,
             AVVideoWidthKey: config.width,
             AVVideoHeightKey: config.height,
             AVVideoCompressionPropertiesKey: [
-                AVVideoAverageBitRateKey: 10_000_000,
+                AVVideoAverageBitRateKey: bitRate,
                 AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel
             ]
         ]
@@ -385,7 +395,7 @@ final class RecordingManager: NSObject {
         }
         assetWriter?.add(videoInput)
 
-        if systemAudioEnabled {
+        if systemAudioEnabled || microphoneEnabled {
             let audioSettings: [String: Any] = [
                 AVFormatIDKey: kAudioFormatMPEG4AAC,
                 AVSampleRateKey: 44100,
@@ -413,7 +423,7 @@ final class RecordingManager: NSObject {
 
         if let stream {
             try stream.addStreamOutput(self, type: .screen, sampleHandlerQueue: .main)
-            if systemAudioEnabled {
+            if systemAudioEnabled || microphoneEnabled {
                 try stream.addStreamOutput(self, type: .audio, sampleHandlerQueue: .main)
             }
             try await stream.startCapture()

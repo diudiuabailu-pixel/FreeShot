@@ -386,7 +386,7 @@ struct RecordingOptionsView: View {
                 .padding(.vertical, 4)
 
             if micEnabled && !systemAudio {
-                Text("当前版本优先保证系统音频录制稳定，单独麦克风混音仍在完善。")
+                Text("麦克风录制需要 macOS 14.0+，低版本仅支持系统音频。")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -657,7 +657,7 @@ struct SettingsView: View {
     @AppStorage("saveDirectory") private var saveDirectory: String = ""
     @AppStorage("imageFormat") private var imageFormat: String = "png"
     @AppStorage("videoQuality") private var videoQuality: String = "high"
-    @AppStorage("showInMenuBar") private var showInMenuBar: Bool = true
+    @AppStorage("launchAtLogin") private var launchAtLogin: Bool = false
     
     var body: some View {
         Form {
@@ -694,7 +694,7 @@ struct SettingsView: View {
             }
             
             Section("通用") {
-                Toggle("在菜单栏显示", isOn: $showInMenuBar)
+                Toggle("开机自动启动", isOn: $launchAtLogin)
             }
             
             Section("快捷键") {
