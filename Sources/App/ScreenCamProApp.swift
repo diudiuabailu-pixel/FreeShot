@@ -14,11 +14,14 @@ struct FreeShotApp: App {
 }
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+    static var shared: AppDelegate!
+
     var statusItem: NSStatusItem?
     var popover: NSPopover?
     var recordingWindow: RecordingIndicatorWindow?
-    
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        AppDelegate.shared = self
         checkPermissions()
         setupStatusBarItem()
         
@@ -32,20 +35,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func checkPermissions() {
-        // 摄像头权限 - 延迟请求避免在 app delegate 中使用 async
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            switch AVCaptureDevice.authorizationStatus(for: .video) {
-            case .notDetermined:
-                AVCaptureDevice.requestAccess(for: .video) { _ in }
-            default:
-                break
+            // 屏幕录制权限
+            if !CGPreflightScreenCaptureAccess() {
+                _ = CGRequestScreenCaptureAccess()
             }
-            
-            switch AVCaptureDevice.authorizationStatus(for: .audio) {
-            case .notDetermined:
+
+            // 摄像头权限
+            if AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined {
+                AVCaptureDevice.requestAccess(for: .video) { _ in }
+            }
+
+            // 麦克风权限
+            if AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined {
                 AVCaptureDevice.requestAccess(for: .audio) { _ in }
-            default:
-                break
             }
         }
     }

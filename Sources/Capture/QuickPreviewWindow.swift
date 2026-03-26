@@ -125,9 +125,9 @@ class QuickPreviewWindow: NSWindow {
     
     @objc private func saveImage() {
         let savePanel = NSSavePanel()
-        savePanel.allowedContentTypes = [.png]
+        savePanel.allowedContentTypes = [.png, .jpeg, .tiff]
         savePanel.nameFieldStringValue = screenshotURL.lastPathComponent
-        
+
         savePanel.begin { response in
             if response == .OK, let url = savePanel.url {
                 try? FileManager.default.removeItem(at: url)

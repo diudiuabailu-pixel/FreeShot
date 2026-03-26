@@ -4,46 +4,70 @@ import ScreenCaptureKit
 
 class ScrollCaptureManager {
     static let shared = ScrollCaptureManager()
-    
+
     private var isCapturing = false
     private var scrollView: NSView?
     private var captureTimer: Timer?
     private var capturedImages: [CGImage] = []
     private var lastScrollPosition: CGFloat = 0
-    
+    private var escMonitor: Any?
+    private var completionHandler: ((NSImage?) -> Void)?
+
     private init() {}
-    
+
     /// 开始滚动截图
-    func startScrollCapture() {
+    func startScrollCapture(completion: @escaping (NSImage?) -> Void = { _ in }) {
         guard !isCapturing else { return }
-        
+
         isCapturing = true
         capturedImages = []
-        
+        completionHandler = completion
+
         // 显示滚动截图指示器
         showScrollIndicator()
-        
+
+        // 监听 ESC 键停止截图
+        escMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            if event.keyCode == 53 { // ESC key
+                self?.finishCapture()
+                return nil
+            }
+            return event
+        }
+
         // 开始定时截取
         captureTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
             self?.captureScrollFrame()
         }
     }
-    
+
     /// 停止滚动截图
     func stopScrollCapture(completion: @escaping (NSImage?) -> Void) {
+        completionHandler = completion
+        finishCapture()
+    }
+
+    private func finishCapture() {
         guard isCapturing else { return }
-        
+
         isCapturing = false
         captureTimer?.invalidate()
         captureTimer = nil
-        
+
+        if let monitor = escMonitor {
+            NSEvent.removeMonitor(monitor)
+            escMonitor = nil
+        }
+
         hideScrollIndicator()
-        
+
         // 拼接图片
         let finalImage = stitchImages(capturedImages)
         capturedImages = []
-        
-        completion(finalImage)
+
+        let handler = completionHandler
+        completionHandler = nil
+        handler?(finalImage)
     }
     
     private func captureScrollFrame() {
@@ -102,10 +126,9 @@ class ScrollCaptureManager {
         NSApp.windows.filter { $0 is ScrollCaptureIndicator }.forEach { $0.close() }
     }
     
-    /// 检测是否需要停止（用户按键）
+    /// 检测是否需要停止（用户按 ESC）
     func checkStopCondition() -> Bool {
-        // 可以通过快捷键或点击来停止
-        return false
+        return !isCapturing
     }
 }
 
