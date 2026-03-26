@@ -22,6 +22,10 @@ final class RecordingManager: NSObject {
     private var sessionStarted = false
     private var firstSampleTime: CMTime?
 
+    // 暂停时间戳偏移（消除恢复后的视频时间跳跃）
+    private var pauseTimeOffset: CMTime = .zero
+    private var lastPauseTime: CMTime = .zero
+
     private var regionSelector: RegionSelectorWindow?
     private var cameraPreviewWindow: CameraPreviewWindow?
 
@@ -67,6 +71,8 @@ final class RecordingManager: NSObject {
         case noDisplayAvailable
         case invalidRegion
         case fileCreationFailed(String)
+        case cameraPermissionDenied
+        case microphonePermissionDenied
 
         var errorDescription: String? {
             switch self {
@@ -80,6 +86,10 @@ final class RecordingManager: NSObject {
                 return "录制区域无效，请重新选择。"
             case .fileCreationFailed(let message):
                 return "创建录制文件失败：\(message)"
+            case .cameraPermissionDenied:
+                return "未授予摄像头权限。请到 系统设置 > 隐私与安全性 > 摄像头 中开启 FreeShot。"
+            case .microphonePermissionDenied:
+                return "未授予麦克风权限。请到 系统设置 > 隐私与安全性 > 麦克风 中开启 FreeShot。"
             }
         }
     }
@@ -140,6 +150,7 @@ final class RecordingManager: NSObject {
         isPaused = false
 
         KeystrokeMonitor.shared.stopMonitoring()
+        MouseClickMonitor.shared.stopMonitoring()
         cameraPreviewWindow?.close()
         cameraPreviewWindow = nil
 
@@ -147,7 +158,7 @@ final class RecordingManager: NSObject {
             do {
                 try await stream?.stopCapture()
             } catch {
-                print("Error stopping stream: \(error)")
+                NSLog("[FreeShot] Error stopping capture stream: %@", error.localizedDescription)
             }
 
             await MainActor.run {
@@ -199,6 +210,8 @@ final class RecordingManager: NSObject {
         isPaused = false
         sessionStarted = false
         firstSampleTime = nil
+        pauseTimeOffset = .zero
+        lastPauseTime = .zero
     }
 
     // MARK: - Private Methods
@@ -221,12 +234,34 @@ final class RecordingManager: NSObject {
             }
         }
 
-        if includeCamera && AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined {
-            _ = await requestMediaAccess(for: .video)
+        if includeCamera {
+            let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+            switch cameraStatus {
+            case .notDetermined:
+                let granted = await requestMediaAccess(for: .video)
+                if !granted { throw RecordingPreparationError.cameraPermissionDenied }
+            case .denied, .restricted:
+                throw RecordingPreparationError.cameraPermissionDenied
+            case .authorized:
+                break
+            @unknown default:
+                break
+            }
         }
 
-        if microphoneEnabled && AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined {
-            _ = await requestMediaAccess(for: .audio)
+        if microphoneEnabled {
+            let micStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+            switch micStatus {
+            case .notDetermined:
+                let granted = await requestMediaAccess(for: .audio)
+                if !granted { throw RecordingPreparationError.microphonePermissionDenied }
+            case .denied, .restricted:
+                throw RecordingPreparationError.microphonePermissionDenied
+            case .authorized:
+                break
+            @unknown default:
+                break
+            }
         }
 
         if !needsRegionSelection && countdownSeconds < 0 {
@@ -268,6 +303,10 @@ final class RecordingManager: NSObject {
             KeystrokeMonitor.shared.startMonitoring()
         }
 
+        if showMouseClicks {
+            MouseClickMonitor.shared.startMonitoring()
+        }
+
         RecordingState.shared.startRecording(includeCamera: includeCamera)
 
         startCountdown {
@@ -275,7 +314,6 @@ final class RecordingManager: NSObject {
                 do {
                     try await self.setupAndStartRecording(region: region, includeCamera: includeCamera, preferredDisplayID: preferredDisplayID, isFullScreen: isFullScreen)
                 } catch {
-                    print("Recording error: \(error)")
                     await MainActor.run {
                         RecordingState.shared.stopRecording()
                         if let appDelegate = NSApp.delegate as? AppDelegate {
@@ -434,29 +472,49 @@ final class RecordingManager: NSObject {
     }
 
     private func finishRecording() {
+        guard assetWriter != nil else { return }
+
         videoInput?.markAsFinished()
         audioInput?.markAsFinished()
 
         let writer = assetWriter
         let url = outputURL
 
-        writer?.finishWriting { [weak self] in
-            guard let self, let url else { return }
+        assetWriter = nil
+        videoInput = nil
+        audioInput = nil
 
+        writer?.finishWriting { [weak self] in
             DispatchQueue.main.async {
+                guard let self else { return }
+
+                RecordingState.shared.stopRecording()
+                if let appDelegate = NSApp.delegate as? AppDelegate {
+                    appDelegate.hideRecordingIndicator()
+                }
+                self.stream = nil
+                self.sessionStarted = false
+                self.firstSampleTime = nil
+                self.pauseTimeOffset = .zero
+                self.lastPauseTime = .zero
+
+                guard writer?.status == .completed else {
+                    let errorMsg = writer?.error?.localizedDescription ?? "写入文件时发生未知错误"
+                    self.present(error: RecordingPreparationError.fileCreationFailed(errorMsg))
+                    if let url { try? FileManager.default.removeItem(at: url) }
+                    return
+                }
+
+                guard let url,
+                      FileManager.default.fileExists(atPath: url.path),
+                      (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? UInt64) ?? 0 > 0 else {
+                    self.present(error: RecordingPreparationError.fileCreationFailed("录制文件为空或不存在"))
+                    return
+                }
+
                 self.saveRecording(url: url)
             }
         }
-
-        RecordingState.shared.stopRecording()
-        if let appDelegate = NSApp.delegate as? AppDelegate {
-            appDelegate.hideRecordingIndicator()
-        }
-
-        // Bug 5: Clean up state after finishing
-        stream = nil
-        sessionStarted = false
-        firstSampleTime = nil
     }
 
     private func saveRecording(url: URL) {
@@ -465,8 +523,16 @@ final class RecordingManager: NSObject {
         savePanel.nameFieldStringValue = "FreeShot-\(dateString()).mp4"
 
         if savePanel.runModal() == .OK, let destURL = savePanel.url {
-            try? FileManager.default.removeItem(at: destURL)
-            try? FileManager.default.copyItem(at: url, to: destURL)
+            do {
+                if FileManager.default.fileExists(atPath: destURL.path) {
+                    try FileManager.default.removeItem(at: destURL)
+                }
+                try FileManager.default.copyItem(at: url, to: destURL)
+                try? FileManager.default.removeItem(at: url)
+            } catch {
+                present(error: error)
+            }
+        } else {
             try? FileManager.default.removeItem(at: url)
         }
     }
@@ -494,8 +560,12 @@ final class RecordingManager: NSObject {
 
 extension RecordingManager: SCStreamDelegate {
     func stream(_ stream: SCStream, didStopWithError error: Error) {
-        print("Stream stopped with error: \(error)")
-        finishRecording()
+        NSLog("[FreeShot] Stream stopped with error: %@", error.localizedDescription)
+        DispatchQueue.main.async { [weak self] in
+            self?.isRecording = false
+            self?.present(error: error)
+            self?.finishRecording()
+        }
     }
 }
 
@@ -505,26 +575,61 @@ extension RecordingManager: SCStreamOutput {
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
         guard isRecording else { return }
 
-        // Bug 4: Skip frames while paused
-        guard !isPaused else { return }
+        // Bug 4: Skip frames while paused, record pause start time
+        if isPaused {
+            if lastPauseTime == .zero {
+                lastPauseTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+            }
+            return
+        }
+
+        let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
 
         // Bug 1: Start session with first real sample timestamp
         if !sessionStarted {
-            let pts = sampleBuffer.presentationTimeStamp
-            guard pts.isValid, pts.seconds > 0 else { return }
-            assetWriter?.startSession(atSourceTime: pts)
+            guard timestamp.isValid, timestamp.seconds > 0 else { return }
+            assetWriter?.startSession(atSourceTime: timestamp)
             sessionStarted = true
-            firstSampleTime = pts
+            firstSampleTime = timestamp
+        }
+
+        // Accumulate pause duration on resume
+        if lastPauseTime != .zero {
+            let pauseDuration = CMTimeSubtract(timestamp, lastPauseTime)
+            pauseTimeOffset = CMTimeAdd(pauseTimeOffset, pauseDuration)
+            lastPauseTime = .zero
+        }
+
+        // Adjust timestamp to remove pause gaps
+        let bufferToWrite: CMSampleBuffer
+        if pauseTimeOffset > .zero {
+            let adjustedTime = CMTimeSubtract(timestamp, pauseTimeOffset)
+            var timing = CMSampleTimingInfo(
+                duration: CMSampleBufferGetDuration(sampleBuffer),
+                presentationTimeStamp: adjustedTime,
+                decodeTimeStamp: .invalid
+            )
+            var adjustedBuffer: CMSampleBuffer?
+            let status = CMSampleBufferCreateCopyWithNewTiming(
+                allocator: nil,
+                sampleBuffer: sampleBuffer,
+                sampleTimingEntryCount: 1,
+                sampleTimingArray: &timing,
+                sampleBufferOut: &adjustedBuffer
+            )
+            bufferToWrite = (status == noErr && adjustedBuffer != nil) ? adjustedBuffer! : sampleBuffer
+        } else {
+            bufferToWrite = sampleBuffer
         }
 
         switch type {
         case .screen:
             if videoInput?.isReadyForMoreMediaData == true {
-                videoInput?.append(sampleBuffer)
+                videoInput?.append(bufferToWrite)
             }
         case .audio:
             if audioInput?.isReadyForMoreMediaData == true {
-                audioInput?.append(sampleBuffer)
+                audioInput?.append(bufferToWrite)
             }
         @unknown default:
             break
