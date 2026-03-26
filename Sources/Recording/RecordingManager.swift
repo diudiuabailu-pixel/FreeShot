@@ -361,7 +361,9 @@ final class RecordingManager: NSObject {
         config.showsCursor = true
         config.capturesAudio = systemAudioEnabled || microphoneEnabled
         if #available(macOS 14.0, *) {
-            config.captureMicrophone = microphoneEnabled
+            if #available(macOS 15.0, *) {
+                config.captureMicrophone = microphoneEnabled
+            }
         }
         config.sourceRect = sourceRect
 
