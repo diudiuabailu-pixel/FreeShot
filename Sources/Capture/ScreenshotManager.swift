@@ -82,7 +82,9 @@ class ScreenshotManager {
     }
     
     private func captureRegionImage(in rect: CGRect) {
-        let imageRect = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
+        // Bug 2: Convert AppKit coords (bottom-left origin) to CG coords (top-left origin)
+        let screenHeight = NSScreen.main?.frame.height ?? 0
+        let imageRect = CGRect(x: rect.minX, y: screenHeight - rect.maxY, width: rect.width, height: rect.height)
         if let image = CGWindowListCreateImage(
             imageRect,
             .optionOnScreenOnly,

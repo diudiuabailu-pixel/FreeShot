@@ -15,7 +15,12 @@ final class RecordingManager: NSObject {
 
     private var outputURL: URL?
     private var isRecording = false
+    private var isPaused = false  // Bug 4: track pause state for frame skipping
     private var includeCamera = false
+
+    // Bug 1: Track session start for correct timestamp alignment
+    private var sessionStarted = false
+    private var firstSampleTime: CMTime?
 
     private var regionSelector: RegionSelectorWindow?
     private var cameraPreviewWindow: CameraPreviewWindow?
@@ -109,9 +114,10 @@ final class RecordingManager: NSObject {
                     throw RecordingPreparationError.noDisplayAvailable
                 }
 
+                // Bug 6: Full screen rect is already in CG coordinates, pass isFullScreen flag
                 let fullRegion = CGRect(x: 0, y: 0, width: display.width, height: display.height)
                 self.startCountdown {
-                    self.startRecordingWithRegion(fullRegion, includeCamera: includeCamera, preferredDisplayID: display.displayID)
+                    self.beginRecording(region: fullRegion, includeCamera: includeCamera, preferredDisplayID: display.displayID, isFullScreen: true)
                 }
             } catch {
                 self.present(error: error)
@@ -120,15 +126,18 @@ final class RecordingManager: NSObject {
     }
 
     func pauseRecording() {
+        isPaused = true  // Bug 4: actually stop writing frames
         RecordingState.shared.pauseRecording()
     }
 
     func resumeRecording() {
+        isPaused = false  // Bug 4: resume writing frames
         RecordingState.shared.resumeRecording()
     }
 
     func stopRecording() {
         isRecording = false
+        isPaused = false
 
         KeystrokeMonitor.shared.stopMonitoring()
         cameraPreviewWindow?.close()
@@ -171,6 +180,27 @@ final class RecordingManager: NSObject {
         }
     }
 
+    // MARK: - Public Entry for Multi-Display (CG coordinates)
+
+    func startRecordingWithRegion(_ region: CGRect, includeCamera: Bool, preferredDisplayID: CGDirectDisplayID? = nil) {
+        // Called from MultiDisplayManager with CG coordinates
+        beginRecording(region: region, includeCamera: includeCamera, preferredDisplayID: preferredDisplayID, isFullScreen: true)
+    }
+
+    // MARK: - State Reset (Bug 5)
+
+    private func resetState() {
+        stream = nil
+        assetWriter = nil
+        videoInput = nil
+        audioInput = nil
+        outputURL = nil
+        isRecording = false
+        isPaused = false
+        sessionStarted = false
+        firstSampleTime = nil
+    }
+
     // MARK: - Private Methods
 
     private func closePopover() {
@@ -207,24 +237,24 @@ final class RecordingManager: NSObject {
     private func showRegionSelector() {
         regionSelector = RegionSelectorWindow(onSelected: { [weak self] rect in
             guard let self else { return }
-            self.startRecordingWithRegion(rect, includeCamera: RecordingState.shared.includeCamera)
+            // Bug 3: Region selector returns AppKit coords, convert to CG here
+            let screenHeight = NSScreen.main?.frame.height ?? 0
+            let cgRect = CGRect(x: rect.minX, y: screenHeight - rect.maxY, width: rect.width, height: rect.height)
+            self.beginRecording(region: cgRect, includeCamera: RecordingState.shared.includeCamera, preferredDisplayID: nil, isFullScreen: false)
         })
         regionSelector?.makeKeyAndOrderFront(nil)
     }
 
-    func startRecordingWithRegion(_ region: CGRect, includeCamera: Bool, preferredDisplayID: CGDirectDisplayID? = nil) {
+    private func beginRecording(region: CGRect, includeCamera: Bool, preferredDisplayID: CGDirectDisplayID?, isFullScreen: Bool) {
         regionSelector?.close()
 
-        startCountdown {
-            self.beginRecording(region: region, includeCamera: includeCamera, preferredDisplayID: preferredDisplayID)
-        }
-    }
-
-    private func beginRecording(region: CGRect, includeCamera: Bool, preferredDisplayID: CGDirectDisplayID?) {
         guard region.width > 1, region.height > 1 else {
             present(error: RecordingPreparationError.invalidRegion)
             return
         }
+
+        // Bug 5: Reset state before starting new recording
+        resetState()
 
         if let appDelegate = NSApp.delegate as? AppDelegate {
             appDelegate.showRecordingIndicator()
@@ -240,19 +270,21 @@ final class RecordingManager: NSObject {
 
         RecordingState.shared.startRecording(includeCamera: includeCamera)
 
-        Task {
-            do {
-                try await setupAndStartRecording(region: region, includeCamera: includeCamera, preferredDisplayID: preferredDisplayID)
-            } catch {
-                print("Recording error: \(error)")
-                await MainActor.run {
-                    RecordingState.shared.stopRecording()
-                    if let appDelegate = NSApp.delegate as? AppDelegate {
-                        appDelegate.hideRecordingIndicator()
+        startCountdown {
+            Task {
+                do {
+                    try await self.setupAndStartRecording(region: region, includeCamera: includeCamera, preferredDisplayID: preferredDisplayID, isFullScreen: isFullScreen)
+                } catch {
+                    print("Recording error: \(error)")
+                    await MainActor.run {
+                        RecordingState.shared.stopRecording()
+                        if let appDelegate = NSApp.delegate as? AppDelegate {
+                            appDelegate.hideRecordingIndicator()
+                        }
+                        self.cameraPreviewWindow?.close()
+                        self.cameraPreviewWindow = nil
+                        self.present(error: error)
                     }
-                    self.cameraPreviewWindow?.close()
-                    self.cameraPreviewWindow = nil
-                    self.present(error: error)
                 }
             }
         }
@@ -263,10 +295,19 @@ final class RecordingManager: NSObject {
         cameraPreviewWindow?.makeKeyAndOrderFront(nil)
     }
 
-    private func setupAndStartRecording(region: CGRect, includeCamera: Bool, preferredDisplayID: CGDirectDisplayID?) async throws {
+    private func setupAndStartRecording(region: CGRect, includeCamera: Bool, preferredDisplayID: CGDirectDisplayID?, isFullScreen: Bool) async throws {
         let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
         let targetDisplay = try pickDisplay(from: content.displays, preferredDisplayID: preferredDisplayID, region: region)
-        let sourceRect = try makeDisplayRelativeRect(from: region, displayID: targetDisplay.displayID)
+
+        // Bug 3 & 6: region is now always in CG coordinates
+        let sourceRect: CGRect
+        if isFullScreen {
+            // Full screen: use full display dimensions directly
+            sourceRect = CGRect(x: 0, y: 0, width: CGFloat(targetDisplay.width), height: CGFloat(targetDisplay.height))
+        } else {
+            sourceRect = try makeDisplayRelativeRect(from: region, displayID: targetDisplay.displayID)
+        }
+
         guard sourceRect.width > 0, sourceRect.height > 0 else {
             throw RecordingPreparationError.invalidRegion
         }
@@ -325,7 +366,10 @@ final class RecordingManager: NSObject {
         guard assetWriter?.startWriting() == true else {
             throw RecordingPreparationError.fileCreationFailed(assetWriter?.error?.localizedDescription ?? "未知错误")
         }
-        assetWriter?.startSession(atSourceTime: .zero)
+        // Bug 1: Do NOT startSession here; wait for first sample buffer timestamp
+        // assetWriter?.startSession(atSourceTime: .zero) -- REMOVED
+        sessionStarted = false
+        firstSampleTime = nil
 
         stream = SCStream(filter: filter, configuration: config, delegate: self)
 
@@ -365,16 +409,18 @@ final class RecordingManager: NSObject {
         })?.backingScaleFactor ?? 2.0
     }
 
-    private func makeDisplayRelativeRect(from region: CGRect, displayID: CGDirectDisplayID) throws -> CGRect {
+    // Bug 3: Now expects CG coordinates (top-left origin) as input
+    private func makeDisplayRelativeRect(from cgRegion: CGRect, displayID: CGDirectDisplayID) throws -> CGRect {
         let displayBounds = CGDisplayBounds(displayID)
-        let clippedGlobal = region.intersection(displayBounds)
+
+        let clippedGlobal = cgRegion.intersection(displayBounds)
         guard !clippedGlobal.isNull, clippedGlobal.width > 0, clippedGlobal.height > 0 else {
             throw RecordingPreparationError.invalidRegion
         }
 
-        // ScreenCaptureKit sourceRect uses display-local coordinates with origin at top-left.
+        // sourceRect is in display-local CG coordinates (top-left origin)
         let localX = clippedGlobal.minX - displayBounds.minX
-        let localY = displayBounds.maxY - clippedGlobal.maxY
+        let localY = clippedGlobal.minY - displayBounds.minY
 
         return CGRect(x: localX, y: localY, width: clippedGlobal.width, height: clippedGlobal.height)
     }
@@ -391,8 +437,11 @@ final class RecordingManager: NSObject {
         videoInput?.markAsFinished()
         audioInput?.markAsFinished()
 
-        assetWriter?.finishWriting { [weak self] in
-            guard let self, let url = self.outputURL else { return }
+        let writer = assetWriter
+        let url = outputURL
+
+        writer?.finishWriting { [weak self] in
+            guard let self, let url else { return }
 
             DispatchQueue.main.async {
                 self.saveRecording(url: url)
@@ -403,7 +452,11 @@ final class RecordingManager: NSObject {
         if let appDelegate = NSApp.delegate as? AppDelegate {
             appDelegate.hideRecordingIndicator()
         }
+
+        // Bug 5: Clean up state after finishing
         stream = nil
+        sessionStarted = false
+        firstSampleTime = nil
     }
 
     private func saveRecording(url: URL) {
@@ -451,6 +504,18 @@ extension RecordingManager: SCStreamDelegate {
 extension RecordingManager: SCStreamOutput {
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
         guard isRecording else { return }
+
+        // Bug 4: Skip frames while paused
+        guard !isPaused else { return }
+
+        // Bug 1: Start session with first real sample timestamp
+        if !sessionStarted {
+            let pts = sampleBuffer.presentationTimeStamp
+            guard pts.isValid, pts.seconds > 0 else { return }
+            assetWriter?.startSession(atSourceTime: pts)
+            sessionStarted = true
+            firstSampleTime = pts
+        }
 
         switch type {
         case .screen:
