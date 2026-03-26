@@ -4,8 +4,6 @@ import AppKit
 class AnnotationOverlayView: NSView {
     var annotations: [AnnotationWindow.AnnotationItem] = []
 
-    override var isFlipped: Bool { true }
-
     override func draw(_ dirtyRect: NSRect) {
         NSColor.red.setStroke()
 

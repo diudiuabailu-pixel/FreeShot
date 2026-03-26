@@ -53,9 +53,11 @@ struct DisplayPickerView: View {
         .frame(width: 350)
         .task {
             let info = await MultiDisplayManager.shared.getDisplayInfo()
-            displays = info
-            if let first = info.first {
-                selectedDisplay = first.id
+            await MainActor.run {
+                displays = info
+                if let first = info.first {
+                    selectedDisplay = first.id
+                }
             }
         }
     }

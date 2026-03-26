@@ -117,22 +117,7 @@ class ScreenshotManager {
     }
     
     private func saveToHistory(url: URL) {
-        var history = ScreenshotHistory.shared.history
-        history.insert(url, at: 0)
-        
-        // 只保留最近30天，最多100个
-        let thirtyDaysAgo = Date().addingTimeInterval(-30 * 24 * 60 * 60)
-        history = history.filter { url in
-            let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
-            let creationDate = attributes?[.creationDate] as? Date ?? Date()
-            return creationDate > thirtyDaysAgo
-        }
-        
-        if history.count > 100 {
-            history = Array(history.prefix(100))
-        }
-        
-        ScreenshotHistory.shared.history = history
+        ScreenshotHistory.shared.add(url)
     }
     
     private func dateString() -> String {

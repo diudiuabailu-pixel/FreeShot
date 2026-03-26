@@ -2,7 +2,6 @@ import SwiftUI
 
 struct PopoverView: View {
     @State private var selectedTab: Tab = .screenshot
-    private var historyWindow: ScreenshotHistoryWindow?
 
     enum Tab: String, CaseIterable {
         case screenshot = "Screenshot"
