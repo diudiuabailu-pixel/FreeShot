@@ -29,13 +29,13 @@ class ScreenshotManager {
         Task {
             do {
                 let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-                let windows = content.windows.filter { $0.isOnScreen && ($0.title?.isEmpty ?? true) == false }
-                
+                let windows = content.windows.filter { $0.isOnScreen && !($0.title?.isEmpty ?? true) }
+
                 await MainActor.run {
                     self.showWindowPicker(windows: windows)
                 }
             } catch {
-                print("Error getting windows: \(error)")
+                AppDelegate.showError("获取窗口列表失败：\(error.localizedDescription)")
             }
         }
     }
@@ -62,7 +62,7 @@ class ScreenshotManager {
                     }
                 }
             } catch {
-                print("Error capturing: \(error)")
+                AppDelegate.showError("截图失败：\(error.localizedDescription)")
             }
         }
     }

@@ -22,6 +22,9 @@ class MultiDisplayManager {
                 return (id: display.displayID, name: name, width: Int(display.width), height: Int(display.height))
             }
         } catch {
+            await MainActor.run {
+                AppDelegate.showError("获取显示器列表失败：\(error.localizedDescription)")
+            }
             return []
         }
     }

@@ -4,6 +4,7 @@ class RecordingIndicatorWindow: NSWindow {
     private var timerLabel: NSTextField!
     private var stopButton: NSButton!
     private var recordingState: RecordingState { RecordingState.shared }
+    private var displayTimer: Timer?
     
     init() {
         super.init(
@@ -84,13 +85,19 @@ class RecordingIndicatorWindow: NSWindow {
     }
     
     private func startTimer() {
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             let duration = self.recordingState.recordingDuration
             let minutes = duration / 60
             let seconds = duration % 60
             self.timerLabel.stringValue = String(format: "%02d:%02d", minutes, seconds)
         }
+    }
+
+    override func close() {
+        displayTimer?.invalidate()
+        displayTimer = nil
+        super.close()
     }
     
     @objc private func stopRecording() {

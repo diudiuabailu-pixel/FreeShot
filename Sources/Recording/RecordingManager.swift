@@ -138,7 +138,7 @@ final class RecordingManager: NSObject {
             do {
                 try await stream?.stopCapture()
             } catch {
-                print("Error stopping stream: \(error)")
+                // stream 停止失败时仍继续清理流程，不阻断用户
             }
 
             await MainActor.run {
@@ -191,12 +191,30 @@ final class RecordingManager: NSObject {
             }
         }
 
-        if includeCamera && AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined {
-            _ = await requestMediaAccess(for: .video)
+        if includeCamera {
+            let videoStatus = AVCaptureDevice.authorizationStatus(for: .video)
+            if videoStatus == .notDetermined {
+                _ = await requestMediaAccess(for: .video)
+            } else if videoStatus == .denied || videoStatus == .restricted {
+                AppDelegate.showError(
+                    "摄像头访问被拒绝，请到系统设置 > 隐私与安全性 > 摄像头中授权 FreeShot。录制将继续但不含摄像头画面。",
+                    title: "摄像头权限不足"
+                )
+                self.includeCamera = false
+            }
         }
 
-        if microphoneEnabled && AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined {
-            _ = await requestMediaAccess(for: .audio)
+        if microphoneEnabled {
+            let audioStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+            if audioStatus == .notDetermined {
+                _ = await requestMediaAccess(for: .audio)
+            } else if audioStatus == .denied || audioStatus == .restricted {
+                AppDelegate.showError(
+                    "麦克风访问被拒绝，请到系统设置 > 隐私与安全性 > 麦克风中授权 FreeShot。录制将继续但不含麦克风音频。",
+                    title: "麦克风权限不足"
+                )
+                self.microphoneEnabled = false
+            }
         }
 
         if !needsRegionSelection && countdownSeconds < 0 {
@@ -244,7 +262,6 @@ final class RecordingManager: NSObject {
             do {
                 try await setupAndStartRecording(region: region, includeCamera: includeCamera, preferredDisplayID: preferredDisplayID)
             } catch {
-                print("Recording error: \(error)")
                 await MainActor.run {
                     RecordingState.shared.stopRecording()
                     if let appDelegate = NSApp.delegate as? AppDelegate {
@@ -441,7 +458,9 @@ final class RecordingManager: NSObject {
 
 extension RecordingManager: SCStreamDelegate {
     func stream(_ stream: SCStream, didStopWithError error: Error) {
-        print("Stream stopped with error: \(error)")
+        DispatchQueue.main.async {
+            self.present(error: error)
+        }
         finishRecording()
     }
 }

@@ -106,7 +106,12 @@ class KeystrokeMonitor {
             },
             userInfo: nil
         ) else {
-            print("Failed to create event tap. Please grant accessibility permissions.")
+            DispatchQueue.main.async {
+                AppDelegate.showError(
+                    "无法监听键盘事件，请到系统设置 > 隐私与安全性 > 辅助功能中授权 FreeShot，然后重试。",
+                    title: "辅助功能权限不足"
+                )
+            }
             return
         }
         

@@ -106,3 +106,18 @@ struct ScreenshotThumbnail: View {
 #Preview {
     ScreenshotHistoryView()
 }
+
+class ScreenshotHistoryWindow: NSWindow {
+    init() {
+        super.init(
+            contentRect: NSRect(x: 0, y: 0, width: 480, height: 400),
+            styleMask: [.titled, .closable, .resizable],
+            backing: .buffered,
+            defer: false
+        )
+        self.title = "截图历史"
+        self.isReleasedWhenClosed = false
+        self.contentViewController = NSHostingController(rootView: ScreenshotHistoryView())
+        self.center()
+    }
+}

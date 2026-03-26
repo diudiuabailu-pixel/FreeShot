@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PopoverView: View {
     @State private var selectedTab: Tab = .screenshot
+    private var historyWindow: ScreenshotHistoryWindow?
 
     enum Tab: String, CaseIterable {
         case screenshot = "Screenshot"
@@ -56,11 +57,14 @@ struct PopoverView: View {
 
             HStack {
                 BottomButton(icon: "clock.arrow.circlepath", title: "History") {
+                    let win = ScreenshotHistoryWindow()
+                    win.makeKeyAndOrderFront(nil)
                 }
 
                 Spacer()
 
                 BottomButton(icon: "gearshape", title: "Settings") {
+                    AppDelegate.showError("Settings 页面即将上线，敬请期待。", title: "即将上线")
                 }
             }
             .padding(.horizontal, 16)
@@ -110,6 +114,10 @@ struct BottomButton: View {
 }
 
 struct ScreenshotTabView: View {
+    @State private var includeWebcam = false
+    @State private var timerEnabled = false
+    @State private var showClicks = true
+
     var body: some View {
         VStack(spacing: 8) {
             CaptureButton(
@@ -163,11 +171,11 @@ struct ScreenshotTabView: View {
 
             GroupBox {
                 VStack(spacing: 0) {
-                    OptionRow(icon: "camera.fill", title: "Include webcam", isOn: .constant(false))
+                    OptionRow(icon: "camera.fill", title: "Include webcam", isOn: $includeWebcam)
                     Divider()
-                    OptionRow(icon: "timer", title: "Timer", isOn: .constant(false))
+                    OptionRow(icon: "timer", title: "Timer", isOn: $timerEnabled)
                     Divider()
-                    OptionRow(icon: "cursorarrow.click", title: "Show clicks", isOn: .constant(true))
+                    OptionRow(icon: "cursorarrow.click", title: "Show clicks", isOn: $showClicks)
                 }
             }
             .groupBoxStyle(DefaultGroupBoxStyle())

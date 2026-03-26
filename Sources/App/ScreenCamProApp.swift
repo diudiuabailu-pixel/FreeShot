@@ -40,13 +40,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             default:
                 break
             }
-            
+
             switch AVCaptureDevice.authorizationStatus(for: .audio) {
             case .notDetermined:
                 AVCaptureDevice.requestAccess(for: .audio) { _ in }
             default:
                 break
             }
+
+            // 屏幕录制权限 - 提前请求，让用户在使用前授权
+            if !CGPreflightScreenCaptureAccess() {
+                CGRequestScreenCaptureAccess()
+            }
+        }
+    }
+
+    static func showError(_ message: String, title: String = "操作失败") {
+        DispatchQueue.main.async {
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = title
+            alert.informativeText = message
+            alert.addButton(withTitle: "好")
+            alert.runModal()
         }
     }
     

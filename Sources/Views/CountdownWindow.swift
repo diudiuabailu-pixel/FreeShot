@@ -4,6 +4,7 @@ class CountdownWindow: NSWindow {
     private var seconds: Int
     private var countdownLabel: NSTextField!
     private var completion: (() -> Void)?
+    private var countdownTimer: Timer?
     
     init(seconds: Int) {
         self.seconds = seconds
@@ -67,22 +68,29 @@ class CountdownWindow: NSWindow {
     
     private func startCountdown() {
         var remaining = seconds
-        
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else {
                 timer.invalidate()
                 return
             }
-            
+
             remaining -= 1
-            
+
             if remaining > 0 {
                 self.countdownLabel.stringValue = "\(remaining)"
             } else {
                 timer.invalidate()
+                self.countdownTimer = nil
                 self.close()
                 self.completion?()
             }
         }
+    }
+
+    override func close() {
+        countdownTimer?.invalidate()
+        countdownTimer = nil
+        super.close()
     }
 }

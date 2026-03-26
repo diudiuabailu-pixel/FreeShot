@@ -120,32 +120,36 @@ class CameraPreviewView: NSView {
     
     private func setupCamera() {
         guard let device = AVCaptureDevice.default(for: .video) else {
-            print("No camera available")
+            DispatchQueue.main.async {
+                AppDelegate.showError("未找到可用摄像头，请检查摄像头是否已连接。", title: "摄像头不可用")
+            }
             return
         }
-        
+
         captureSession = AVCaptureSession()
         captureSession?.sessionPreset = .medium
-        
+
         do {
             let input = try AVCaptureDeviceInput(device: device)
             if captureSession?.canAddInput(input) == true {
                 captureSession?.addInput(input)
             }
-            
+
             // 添加预览层
             previewLayer = AVCaptureVideoPreviewLayer(session: captureSession!)
             previewLayer?.videoGravity = .resizeAspectFill
             previewLayer?.frame = bounds
             previewLayer?.cornerRadius = 12
-            
+
             self.layer = previewLayer
-            
+
             // 保持预览层填充视图
             self.wantsLayer = true
-            
+
         } catch {
-            print("Camera setup error: \(error)")
+            DispatchQueue.main.async {
+                AppDelegate.showError("摄像头初始化失败：\(error.localizedDescription)")
+            }
         }
     }
     

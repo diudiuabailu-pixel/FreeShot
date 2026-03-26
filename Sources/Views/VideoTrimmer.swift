@@ -121,7 +121,7 @@ class VideoTrimmer {
                 case .success(let url):
                     completion(url)
                 case .failure(let error):
-                    print("Trim error: \(error)")
+                    AppDelegate.showError("视频裁剪失败：\(error.localizedDescription)")
                     completion(nil)
                 }
             }

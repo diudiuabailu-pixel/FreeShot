@@ -49,49 +49,31 @@ class AutoScrollCaptureManager {
     }
     
     private func captureFrame() {
+        // 硬性上限：防止内存溢出崩溃
+        if capturedImages.count >= 200 {
+            let result = stitchImages(capturedImages)
+            capturedImages = []
+            hideIndicator()
+            isCapturing = false
+            captureTimer?.invalidate()
+            captureTimer = nil
+            if let img = result { saveImage(img) }
+            return
+        }
+
         guard let screen = NSScreen.main else { return }
-        
+
         let rect = CGRect(x: 0, y: 0, width: Int(screen.frame.width), height: Int(screen.frame.height))
-        
+
         if let image = CGWindowListCreateImage(
             rect,
             .optionOnScreenOnly,
             kCGNullWindowID,
             [.bestResolution]
         ) {
-            // 检查是否停止滚动
-            if checkIfShouldStop() {
-                stableCount += 1
-                if stableCount > 5 {
-                    // 停止并保存
-                    let result = stitchImages(capturedImages)
-                    capturedImages = []
-                    
-                    // 隐藏指示器
-                    hideIndicator()
-                    isCapturing = false
-                    captureTimer?.invalidate()
-                    captureTimer = nil
-                    
-                    // 保存结果
-                    if let img = result {
-                        saveImage(img)
-                    }
-                    return
-                }
-            } else {
-                stableCount = 0
-            }
-            
             capturedImages.append(image)
             updateProgress()
         }
-    }
-    
-    private func checkIfShouldStop() -> Bool {
-        // 简化检测：检查鼠标是否在滚动
-        // 实际可以通过监控 scroll wheel 事件
-        return false
     }
     
     private func stitchImages(_ images: [CGImage]) -> NSImage? {
@@ -119,6 +101,10 @@ class AutoScrollCaptureManager {
         return stitchedImage
     }
     
+    func saveImagePublic(_ image: NSImage) {
+        saveImage(image)
+    }
+
     private func saveImage(_ image: NSImage) {
         let savePanel = NSSavePanel()
         savePanel.allowedContentTypes = [.png]
@@ -158,57 +144,66 @@ class AutoScrollCaptureManager {
 
 class AutoScrollIndicatorWindow: NSWindow {
     private var progressLabel: NSTextField!
-    
+
     init() {
         super.init(
-            contentRect: NSRect(x: 0, y: 0, width: 200, height: 60),
+            contentRect: NSRect(x: 0, y: 0, width: 220, height: 70),
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
         )
-        
+
         self.level = .floating
         self.isOpaque = false
         self.backgroundColor = .clear
-        
+        self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+
         setupUI()
         positionWindow()
     }
-    
+
     private func setupUI() {
-        let container = NSView(frame: NSRect(x: 0, y: 0, width: 200, height: 60))
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 220, height: 70))
         container.wantsLayer = true
         container.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.8).cgColor
         container.layer?.cornerRadius = 12
-        
+
         progressLabel = NSTextField(labelWithString: "滚动截图中... 0 张")
-        progressLabel.frame = NSRect(x: 0, y: 20, width: 200, height: 20)
+        progressLabel.frame = NSRect(x: 0, y: 38, width: 220, height: 20)
         progressLabel.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         progressLabel.textColor = .white
         progressLabel.alignment = .center
-        
-        let tip = NSTextField(labelWithString: "停止滚动后自动保存")
-        tip.frame = NSRect(x: 0, y: 5, width: 200, height: 15)
-        tip.font = NSFont.systemFont(ofSize: 10)
-        tip.textColor = .white.withAlphaComponent(0.7)
-        tip.alignment = .center
-        
+
+        let stopButton = NSButton(frame: NSRect(x: 60, y: 8, width: 100, height: 24))
+        stopButton.title = "停止并保存"
+        stopButton.bezelStyle = .rounded
+        stopButton.font = NSFont.systemFont(ofSize: 12)
+        stopButton.target = self
+        stopButton.action = #selector(stopCapture)
+
         container.addSubview(progressLabel)
-        container.addSubview(tip)
-        
+        container.addSubview(stopButton)
+
         self.contentView = container
     }
-    
+
     private func positionWindow() {
         guard let screen = NSScreen.main else { return }
         let screenFrame = screen.visibleFrame
-        
-        let x = screenFrame.midX - 100
-        let y = screenFrame.maxY - 80
-        
+
+        let x = screenFrame.midX - 110
+        let y = screenFrame.maxY - 90
+
         self.setFrameOrigin(NSPoint(x: x, y: y))
     }
-    
+
+    @objc private func stopCapture() {
+        AutoScrollCaptureManager.shared.stopCapture { image in
+            guard let image = image else { return }
+            AutoScrollCaptureManager.shared.saveImagePublic(image)
+        }
+    }
+
     func updateProgress(_ count: Int) {
         progressLabel.stringValue = "滚动截图中... \(count) 张"
     }

@@ -51,19 +51,11 @@ struct DisplayPickerView: View {
         }
         .padding()
         .frame(width: 350)
-        .onAppear {
-            loadDisplays()
-        }
-    }
-    
-    private func loadDisplays() {
-        Task {
+        .task {
             let info = await MultiDisplayManager.shared.getDisplayInfo()
-            await MainActor.run {
-                displays = info
-                if let first = info.first {
-                    selectedDisplay = first.id
-                }
+            displays = info
+            if let first = info.first {
+                selectedDisplay = first.id
             }
         }
     }

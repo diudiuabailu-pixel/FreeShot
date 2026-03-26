@@ -1,8 +1,59 @@
 import AppKit
 
+/// 专门负责绘制标注层，不绘制底图，避免大图反复 lockFocus 导致的性能问题
+class AnnotationOverlayView: NSView {
+    var annotations: [AnnotationWindow.AnnotationItem] = []
+
+    override var isFlipped: Bool { true }
+
+    override func draw(_ dirtyRect: NSRect) {
+        NSColor.red.setStroke()
+
+        for annotation in annotations {
+            let path = NSBezierPath()
+            path.lineWidth = 3
+
+            switch annotation.tool {
+            case .arrow:
+                path.move(to: annotation.startPoint)
+                path.line(to: annotation.endPoint)
+                let angle = atan2(annotation.endPoint.y - annotation.startPoint.y,
+                                  annotation.endPoint.x - annotation.startPoint.x)
+                let arrowLength: CGFloat = 15
+                let p1 = NSPoint(x: annotation.endPoint.x - arrowLength * cos(angle - .pi / 6),
+                                 y: annotation.endPoint.y - arrowLength * sin(angle - .pi / 6))
+                let p2 = NSPoint(x: annotation.endPoint.x - arrowLength * cos(angle + .pi / 6),
+                                 y: annotation.endPoint.y - arrowLength * sin(angle + .pi / 6))
+                path.move(to: annotation.endPoint); path.line(to: p1)
+                path.move(to: annotation.endPoint); path.line(to: p2)
+            case .rectangle:
+                let rect = NSRect(x: min(annotation.startPoint.x, annotation.endPoint.x),
+                                  y: min(annotation.startPoint.y, annotation.endPoint.y),
+                                  width: abs(annotation.endPoint.x - annotation.startPoint.x),
+                                  height: abs(annotation.endPoint.y - annotation.startPoint.y))
+                path.appendRect(rect)
+            case .circle:
+                let rect = NSRect(x: min(annotation.startPoint.x, annotation.endPoint.x),
+                                  y: min(annotation.startPoint.y, annotation.endPoint.y),
+                                  width: abs(annotation.endPoint.x - annotation.startPoint.x),
+                                  height: abs(annotation.endPoint.y - annotation.startPoint.y))
+                path.appendOval(in: rect)
+            case .text:
+                let attrs: [NSAttributedString.Key: Any] = [
+                    .font: NSFont.systemFont(ofSize: 16, weight: .medium),
+                    .foregroundColor: NSColor.red
+                ]
+                annotation.text.draw(at: annotation.startPoint, withAttributes: attrs)
+            }
+
+            path.stroke()
+        }
+    }
+}
+
 class AnnotationWindow: NSWindow {
     private var imageView: NSImageView!
-    private var currentImage: NSImage
+    private var annotationOverlay: AnnotationOverlayView!
     private var originalImage: NSImage
     private var annotations: [AnnotationItem] = []
     private var currentTool: AnnotationTool = .arrow
@@ -25,8 +76,7 @@ class AnnotationWindow: NSWindow {
     
     init(image: NSImage) {
         self.originalImage = image
-        self.currentImage = image
-        
+
         let imageSize = image.size
         super.init(
             contentRect: NSRect(origin: .zero, size: imageSize),
@@ -42,27 +92,33 @@ class AnnotationWindow: NSWindow {
     }
     
     private func setupUI() {
-        imageView = NSImageView(frame: NSRect(origin: .zero, size: originalImage.size))
+        let imgFrame = NSRect(x: 0, y: 50, width: originalImage.size.width, height: originalImage.size.height)
+
+        imageView = NSImageView(frame: imgFrame)
         imageView.image = originalImage
         imageView.imageScaling = .scaleProportionallyUpOrDown
-        self.contentView = imageView
-        
-        // 添加工具栏
-        let toolbar = NSView(frame: NSRect(x: 0, y: originalImage.size.height - 50, width: originalImage.size.width, height: 50))
+
+        // overlay 覆盖在图片上方，只负责绘制标注
+        annotationOverlay = AnnotationOverlayView(frame: imgFrame)
+        annotationOverlay.wantsLayer = true
+        annotationOverlay.layer?.backgroundColor = NSColor.clear.cgColor
+
+        // 工具栏
+        let toolbar = NSView(frame: NSRect(x: 0, y: 0, width: originalImage.size.width, height: 50))
         toolbar.wantsLayer = true
         toolbar.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
-        
+
         let stackView = NSStackView(frame: NSRect(x: 10, y: 10, width: originalImage.size.width - 20, height: 30))
         stackView.orientation = .horizontal
         stackView.spacing = 10
-        
+
         let tools: [(String, String, AnnotationTool)] = [
             ("arrow.up.right", "箭头", .arrow),
             ("rectangle", "矩形", .rectangle),
             ("circle", "圆形", .circle),
             ("textformat", "文字", .text)
         ]
-        
+
         for (icon, title, tool) in tools {
             let button = NSButton()
             button.bezelStyle = .texturedRounded
@@ -74,7 +130,7 @@ class AnnotationWindow: NSWindow {
             button.action = #selector(toolSelected(_:))
             stackView.addArrangedSubview(button)
         }
-        
+
         let saveButton = NSButton()
         saveButton.bezelStyle = .texturedRounded
         saveButton.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: "保存")
@@ -82,20 +138,18 @@ class AnnotationWindow: NSWindow {
         saveButton.imagePosition = .imageLeading
         saveButton.target = self
         saveButton.action = #selector(saveImage)
-        
+
         let spacer = NSView()
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
         stackView.addArrangedSubview(spacer)
         stackView.addArrangedSubview(saveButton)
-        
         toolbar.addSubview(stackView)
-        
-        // 创建包含图片和工具栏的容器
+
         let containerView = NSView(frame: NSRect(origin: .zero, size: NSSize(width: originalImage.size.width, height: originalImage.size.height + 50)))
-        imageView.frame.origin.y = 50
         containerView.addSubview(imageView)
+        containerView.addSubview(annotationOverlay)
         containerView.addSubview(toolbar)
-        
+
         self.contentView = containerView
     }
     
@@ -203,63 +257,9 @@ extension AnnotationWindow {
     }
     
     private func redrawPreview() {
-        // 临时在图片上绘制
-        let previewImage = NSImage(size: originalImage.size)
-        previewImage.lockFocus()
-        
-        originalImage.draw(in: NSRect(origin: .zero, size: originalImage.size))
-        
-        NSColor.red.setStroke()
-        
-        for annotation in annotations {
-            let path = NSBezierPath()
-            path.lineWidth = 3
-            
-            switch annotation.tool {
-            case .arrow:
-                path.move(to: annotation.startPoint)
-                path.line(to: annotation.endPoint)
-            case .rectangle:
-                let rect = NSRect(
-                    x: min(annotation.startPoint.x, annotation.endPoint.x),
-                    y: min(annotation.startPoint.y, annotation.endPoint.y),
-                    width: abs(annotation.endPoint.x - annotation.startPoint.x),
-                    height: abs(annotation.endPoint.y - annotation.startPoint.y)
-                )
-                path.appendRect(rect)
-            case .circle:
-                let rect = NSRect(
-                    x: min(annotation.startPoint.x, annotation.endPoint.x),
-                    y: min(annotation.startPoint.y, annotation.endPoint.y),
-                    width: abs(annotation.endPoint.x - annotation.startPoint.x),
-                    height: abs(annotation.endPoint.y - annotation.startPoint.y)
-                )
-                path.appendOval(in: rect)
-            case .text:
-                let attrs: [NSAttributedString.Key: Any] = [
-                    .font: NSFont.systemFont(ofSize: 16),
-                    .foregroundColor: NSColor.red
-                ]
-                annotation.text.draw(at: annotation.startPoint, withAttributes: attrs)
-            }
-            
-            path.stroke()
-        }
-        
-        previewImage.unlockFocus()
-        
-        // 更新视图（排除工具栏）
-        if let containerView = self.contentView {
-            for subview in containerView.subviews {
-                if subview == imageView {
-                    subview.removeFromSuperview()
-                }
-            }
-            
-            imageView.frame = NSRect(x: 0, y: 50, width: originalImage.size.width, height: originalImage.size.height)
-            imageView.image = previewImage
-            containerView.addSubview(imageView)
-        }
+        // 只更新 overlay 数据并触发重绘，底图 imageView 不动
+        annotationOverlay.annotations = annotations
+        annotationOverlay.needsDisplay = true
     }
     
     private func showTextInput(at point: NSPoint) {

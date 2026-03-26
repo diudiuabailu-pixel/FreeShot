@@ -92,7 +92,7 @@ class GifExporter {
                     case .success(let url):
                         completion(url)
                     case .failure(let error):
-                        print("GIF export error: \(error)")
+                        AppDelegate.showError("GIF 导出失败：\(error.localizedDescription)")
                         completion(nil)
                     }
                 }

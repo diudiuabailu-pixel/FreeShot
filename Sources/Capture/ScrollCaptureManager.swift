@@ -93,26 +93,44 @@ class ScrollCaptureManager {
         return stitchedImage
     }
     
+    private var scrollIndicator: ScrollCaptureIndicator?
+
     private func showScrollIndicator() {
-        let indicator = ScrollCaptureIndicator()
-        indicator.makeKeyAndOrderFront(nil)
+        scrollIndicator = ScrollCaptureIndicator()
+        scrollIndicator?.makeKeyAndOrderFront(nil)
     }
     
     private func hideScrollIndicator() {
-        NSApp.windows.filter { $0 is ScrollCaptureIndicator }.forEach { $0.close() }
+        scrollIndicator?.close()
+        scrollIndicator = nil
     }
-    
-    /// 检测是否需要停止（用户按键）
-    func checkStopCondition() -> Bool {
-        // 可以通过快捷键或点击来停止
-        return false
+
+    func saveImagePublic(_ image: NSImage) {
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.png]
+        savePanel.nameFieldStringValue = "FreeShot-Scroll-\(dateString()).png"
+        savePanel.begin { response in
+            if response == .OK, let url = savePanel.url {
+                if let tiffData = image.tiffRepresentation,
+                   let bitmap = NSBitmapImageRep(data: tiffData),
+                   let pngData = bitmap.representation(using: .png, properties: [:]) {
+                    try? pngData.write(to: url)
+                }
+            }
+        }
+    }
+
+    private func dateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd-HHmmss"
+        return formatter.string(from: Date())
     }
 }
 
 class ScrollCaptureIndicator: NSWindow {
     init() {
         super.init(
-            contentRect: NSRect(x: 0, y: 0, width: 200, height: 60),
+            contentRect: NSRect(x: 0, y: 0, width: 220, height: 70),
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
@@ -127,27 +145,35 @@ class ScrollCaptureIndicator: NSWindow {
     }
     
     private func setupUI() {
-        let container = NSView(frame: NSRect(x: 0, y: 0, width: 200, height: 60))
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 220, height: 70))
         container.wantsLayer = true
         container.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.8).cgColor
         container.layer?.cornerRadius = 12
-        
+
         let label = NSTextField(labelWithString: "滚动截图中...")
-        label.frame = NSRect(x: 0, y: 20, width: 200, height: 20)
+        label.frame = NSRect(x: 0, y: 40, width: 220, height: 20)
         label.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         label.textColor = .white
         label.alignment = .center
-        
-        let tip = NSTextField(labelWithString: "按 ESC 停止")
-        tip.frame = NSRect(x: 0, y: 5, width: 200, height: 15)
-        tip.font = NSFont.systemFont(ofSize: 11)
-        tip.textColor = .white.withAlphaComponent(0.7)
-        tip.alignment = .center
-        
+
+        let stopButton = NSButton(frame: NSRect(x: 60, y: 8, width: 100, height: 24))
+        stopButton.title = "停止并保存"
+        stopButton.bezelStyle = .rounded
+        stopButton.font = NSFont.systemFont(ofSize: 12)
+        stopButton.target = self
+        stopButton.action = #selector(stopCapture)
+
         container.addSubview(label)
-        container.addSubview(tip)
-        
+        container.addSubview(stopButton)
+
         self.contentView = container
+    }
+
+    @objc private func stopCapture() {
+        ScrollCaptureManager.shared.stopScrollCapture { image in
+            guard let image = image else { return }
+            ScrollCaptureManager.shared.saveImagePublic(image)
+        }
     }
     
     private func positionWindow() {
