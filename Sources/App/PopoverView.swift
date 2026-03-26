@@ -131,10 +131,20 @@ struct BottomButton: View {
 }
 
 struct ScreenshotTabView: View {
-    @State private var includeWebcam = false
-    @State private var timerEnabled = false
-    @State private var showClicks = true
-    
+    @State private var timerSelection: Int = 0
+    @AppStorage("imageFormat") private var imageFormat: String = "png"
+
+    private func applyOptions() {
+        let seconds: Int
+        switch timerSelection {
+        case 1: seconds = 3
+        case 2: seconds = 5
+        case 3: seconds = 10
+        default: seconds = 0
+        }
+        ScreenshotManager.shared.timerSeconds = seconds
+    }
+
     var body: some View {
         VStack(spacing: 8) {
             CaptureButton(
@@ -143,6 +153,7 @@ struct ScreenshotTabView: View {
                 shortcut: "⌘⇧4",
                 color: .blue
             ) {
+                applyOptions()
                 ScreenshotManager.shared.captureRegion()
             }
 
@@ -152,6 +163,7 @@ struct ScreenshotTabView: View {
                 shortcut: "⌘⇧5",
                 color: .purple
             ) {
+                applyOptions()
                 ScreenshotManager.shared.captureWindow()
             }
 
@@ -161,6 +173,7 @@ struct ScreenshotTabView: View {
                 shortcut: "⌘⇧6",
                 color: .green
             ) {
+                applyOptions()
                 ScreenshotManager.shared.captureFullScreen()
             }
 
@@ -188,12 +201,36 @@ struct ScreenshotTabView: View {
 
             GroupBox {
                 VStack(spacing: 0) {
-                    OptionRow(icon: "camera.fill", title: "Include webcam", isOn: $includeWebcam)
+                    HStack {
+                        Label("Timer", systemImage: "timer")
+                            .font(.system(size: 13))
+                        Spacer()
+                        Picker("", selection: $timerSelection) {
+                            Text("None").tag(0)
+                            Text("3s").tag(1)
+                            Text("5s").tag(2)
+                            Text("10s").tag(3)
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 180)
+                    }
+
                     Divider()
-                    OptionRow(icon: "timer", title: "Timer", isOn: $timerEnabled)
-                    Divider()
-                    OptionRow(icon: "cursorarrow.click", title: "Show clicks", isOn: $showClicks)
+
+                    HStack {
+                        Label("Format", systemImage: "photo")
+                            .font(.system(size: 13))
+                        Spacer()
+                        Picker("", selection: $imageFormat) {
+                            Text("PNG").tag("png")
+                            Text("JPEG").tag("jpeg")
+                            Text("TIFF").tag("tiff")
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 160)
+                    }
                 }
+                .padding(.vertical, 4)
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
         }
