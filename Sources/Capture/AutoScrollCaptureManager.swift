@@ -4,94 +4,135 @@ import ScreenCaptureKit
 
 class AutoScrollCaptureManager {
     static let shared = AutoScrollCaptureManager()
-    
+
     private var isCapturing = false
     private var capturedImages: [CGImage] = []
     private var lastScrollPosition: CGFloat = 0
     private var stableCount = 0
     private var captureTimer: Timer?
     private var indicatorWindow: AutoScrollIndicatorWindow?
-    
+    private var escMonitor: Any?
+    private var scrollMonitor: Any?
+    private var lastScrollEventTime: Date = Date()
+    private var hasReceivedScrollEvent = false
+
     private init() {}
-    
+
     /// 开始自动滚动截图
     func startCapture() {
         guard !isCapturing else { return }
-        
+
         isCapturing = true
         capturedImages = []
         stableCount = 0
-        
+        hasReceivedScrollEvent = false
+        lastScrollEventTime = Date()
+
         // 显示指示器
         showIndicator()
-        
+
+        // 监听 ESC 键停止截图
+        escMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            if event.keyCode == 53 { // ESC
+                self?.finishAndSave()
+                return nil
+            }
+            return event
+        }
+
+        // 监听滚动事件，记录最后滚动时间
+        scrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+            guard let self, self.isCapturing else { return }
+            if event.scrollingDeltaY != 0 {
+                self.hasReceivedScrollEvent = true
+                self.lastScrollEventTime = Date()
+                self.stableCount = 0
+            }
+        }
+
         // 开始捕获
         captureTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
             self?.captureFrame()
         }
     }
-    
+
     /// 停止捕获
     func stopCapture(completion: @escaping (NSImage?) -> Void) {
         guard isCapturing else { return }
-        
+
         isCapturing = false
         captureTimer?.invalidate()
         captureTimer = nil
-        
+        removeMonitors()
         hideIndicator()
-        
+
         // 拼接图片
         let result = stitchImages(capturedImages)
         capturedImages = []
-        
+
         completion(result)
+    }
+
+    private func removeMonitors() {
+        if let monitor = escMonitor {
+            NSEvent.removeMonitor(monitor)
+            escMonitor = nil
+        }
+        if let monitor = scrollMonitor {
+            NSEvent.removeMonitor(monitor)
+            scrollMonitor = nil
+        }
     }
     
     private func captureFrame() {
-        guard let screen = NSScreen.main else { return }
-        
+        guard isCapturing, let screen = NSScreen.main else { return }
+
         let rect = CGRect(x: 0, y: 0, width: Int(screen.frame.width), height: Int(screen.frame.height))
-        
+
         if let image = CGWindowListCreateImage(
             rect,
             .optionOnScreenOnly,
             kCGNullWindowID,
             [.bestResolution]
         ) {
-            // 检查是否停止滚动
+            // 检查用户是否停止滚动（超过 1.5 秒无滚动事件）
             if checkIfShouldStop() {
                 stableCount += 1
                 if stableCount > 5 {
-                    // 停止并保存
-                    let result = stitchImages(capturedImages)
-                    capturedImages = []
-                    
-                    // 隐藏指示器
-                    hideIndicator()
-                    isCapturing = false
-                    captureTimer?.invalidate()
-                    captureTimer = nil
-                    
-                    // 保存结果
-                    if let img = result {
-                        saveImage(img)
-                    }
+                    finishAndSave()
                     return
                 }
             } else {
                 stableCount = 0
             }
-            
+
             capturedImages.append(image)
             updateProgress()
         }
     }
-    
+
     private func checkIfShouldStop() -> Bool {
-        // 简化检测：检查鼠标是否在滚动
-        // 实际可以通过监控 scroll wheel 事件
-        return false
+        // 只有在收到过滚动事件后才检测停止
+        guard hasReceivedScrollEvent else { return false }
+        // 超过 1.5 秒没有滚动事件，认为滚动停止
+        return Date().timeIntervalSince(lastScrollEventTime) > 1.5
+    }
+
+    private func finishAndSave() {
+        guard isCapturing else { return }
+
+        isCapturing = false
+        captureTimer?.invalidate()
+        captureTimer = nil
+        removeMonitors()
+        hideIndicator()
+
+        let result = stitchImages(capturedImages)
+        capturedImages = []
+
+        if let img = result {
+            saveImage(img)
+        }
     }
     
     private func stitchImages(_ images: [CGImage]) -> NSImage? {
@@ -187,7 +228,7 @@ class AutoScrollIndicatorWindow: NSWindow {
         progressLabel.textColor = .white
         progressLabel.alignment = .center
         
-        let tip = NSTextField(labelWithString: "停止滚动后自动保存")
+        let tip = NSTextField(labelWithString: "停止滚动自动保存 / ESC 手动停止")
         tip.frame = NSRect(x: 0, y: 5, width: 200, height: 15)
         tip.font = NSFont.systemFont(ofSize: 10)
         tip.textColor = .white.withAlphaComponent(0.7)
