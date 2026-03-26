@@ -76,15 +76,20 @@ class WindowPickerWindow: NSWindow {
     }
     
     private func saveScreenshot(_ image: CGImage) {
-        let savePanel = NSSavePanel()
-        savePanel.allowedContentTypes = [.png]
-        savePanel.nameFieldStringValue = "FreeShot-Window-\(dateString()).png"
+        // Show quick preview (same as region/fullscreen screenshots)
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FreeShot-Window-\(dateString()).png")
         
-        if savePanel.runModal() == .OK, let url = savePanel.url {
-            let bitmapRep = NSBitmapImageRep(cgImage: image)
-            if let data = bitmapRep.representation(using: .png, properties: [:]) {
-                try? data.write(to: url)
-            }
+        let bitmapRep = NSBitmapImageRep(cgImage: image)
+        if let data = bitmapRep.representation(using: .png, properties: [:]) {
+            try? data.write(to: tempURL)
+            
+            // Save to history
+            ScreenshotHistory.shared.add(tempURL)
+            
+            // Show quick preview
+            let previewWindow = QuickPreviewWindow(image: image, url: tempURL)
+            previewWindow.makeKeyAndOrderFront(nil)
         }
     }
     

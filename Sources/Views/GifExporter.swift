@@ -41,8 +41,11 @@ class GifExporter {
         }
         
         var framesGenerated = 0
+        var framesProcessed = 0
         
         imageGenerator.generateCGImagesAsynchronously(forTimes: frameTimes) { requestedTime, cgImage, actualTime, result, error in
+            framesProcessed += 1
+            
             if let cgImage = cgImage {
                 let frameProperties: [String: Any] = [
                     kCGImagePropertyGIFDictionary as String: [
@@ -53,9 +56,17 @@ class GifExporter {
                 framesGenerated += 1
             }
             
-            if framesGenerated == frameCount {
-                CGImageDestinationFinalize(destination)
-                completion(.success(outputURL))
+            if framesProcessed == frameCount {
+                if framesGenerated > 0 {
+                    CGImageDestinationFinalize(destination)
+                    DispatchQueue.main.async {
+                        completion(.success(outputURL))
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        completion(.failure(NSError(domain: "GifExporter", code: -2, userInfo: [NSLocalizedDescriptionKey: "No frames could be extracted from video"])))
+                    }
+                }
             }
         }
     }

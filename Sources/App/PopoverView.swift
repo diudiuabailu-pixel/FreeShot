@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct PopoverView: View {
     @State private var selectedTab: Tab = .screenshot
@@ -56,11 +57,31 @@ struct PopoverView: View {
 
             HStack {
                 BottomButton(icon: "clock.arrow.circlepath", title: "History") {
+                    let historyWindow = NSWindow(
+                        contentRect: NSRect(x: 0, y: 0, width: 350, height: 400),
+                        styleMask: [.titled, .closable, .resizable],
+                        backing: .buffered,
+                        defer: false
+                    )
+                    historyWindow.title = "截图历史"
+                    historyWindow.center()
+                    historyWindow.contentView = NSHostingController(rootView: ScreenshotHistoryView()).view
+                    historyWindow.makeKeyAndOrderFront(nil)
                 }
 
                 Spacer()
 
                 BottomButton(icon: "gearshape", title: "Settings") {
+                    let settingsWindow = NSWindow(
+                        contentRect: NSRect(x: 0, y: 0, width: 400, height: 300),
+                        styleMask: [.titled, .closable],
+                        backing: .buffered,
+                        defer: false
+                    )
+                    settingsWindow.title = "FreeShot 设置"
+                    settingsWindow.center()
+                    settingsWindow.contentView = NSHostingController(rootView: SettingsView()).view
+                    settingsWindow.makeKeyAndOrderFront(nil)
                 }
             }
             .padding(.horizontal, 16)
@@ -110,6 +131,10 @@ struct BottomButton: View {
 }
 
 struct ScreenshotTabView: View {
+    @State private var includeWebcam = false
+    @State private var timerEnabled = false
+    @State private var showClicks = true
+    
     var body: some View {
         VStack(spacing: 8) {
             CaptureButton(
@@ -163,11 +188,11 @@ struct ScreenshotTabView: View {
 
             GroupBox {
                 VStack(spacing: 0) {
-                    OptionRow(icon: "camera.fill", title: "Include webcam", isOn: .constant(false))
+                    OptionRow(icon: "camera.fill", title: "Include webcam", isOn: $includeWebcam)
                     Divider()
-                    OptionRow(icon: "timer", title: "Timer", isOn: .constant(false))
+                    OptionRow(icon: "timer", title: "Timer", isOn: $timerEnabled)
                     Divider()
-                    OptionRow(icon: "cursorarrow.click", title: "Show clicks", isOn: .constant(true))
+                    OptionRow(icon: "cursorarrow.click", title: "Show clicks", isOn: $showClicks)
                 }
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
@@ -589,4 +614,70 @@ struct RecordButton: View {
 
 #Preview {
     PopoverView()
+}
+
+struct SettingsView: View {
+    @AppStorage("saveDirectory") private var saveDirectory: String = ""
+    @AppStorage("imageFormat") private var imageFormat: String = "png"
+    @AppStorage("videoQuality") private var videoQuality: String = "high"
+    @AppStorage("showInMenuBar") private var showInMenuBar: Bool = true
+    
+    var body: some View {
+        Form {
+            Section("截图设置") {
+                Picker("图片格式", selection: $imageFormat) {
+                    Text("PNG").tag("png")
+                    Text("JPEG").tag("jpeg")
+                    Text("TIFF").tag("tiff")
+                }
+                
+                HStack {
+                    Text("保存位置")
+                    Spacer()
+                    Text(saveDirectory.isEmpty ? "桌面" : saveDirectory)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                    Button("选择...") {
+                        let panel = NSOpenPanel()
+                        panel.canChooseDirectories = true
+                        panel.canChooseFiles = false
+                        if panel.runModal() == .OK, let url = panel.url {
+                            saveDirectory = url.path
+                        }
+                    }
+                }
+            }
+            
+            Section("录屏设置") {
+                Picker("视频质量", selection: $videoQuality) {
+                    Text("高").tag("high")
+                    Text("中").tag("medium")
+                    Text("低").tag("low")
+                }
+            }
+            
+            Section("通用") {
+                Toggle("在菜单栏显示", isOn: $showInMenuBar)
+            }
+            
+            Section("快捷键") {
+                HStack { Text("区域截图"); Spacer(); Text("⌘⇧4").foregroundColor(.secondary) }
+                HStack { Text("窗口截图"); Spacer(); Text("⌘⇧5").foregroundColor(.secondary) }
+                HStack { Text("全屏截图"); Spacer(); Text("⌘⇧6").foregroundColor(.secondary) }
+                HStack { Text("区域录屏"); Spacer(); Text("⌘⇧R").foregroundColor(.secondary) }
+                HStack { Text("全屏录屏"); Spacer(); Text("⌘⇧F").foregroundColor(.secondary) }
+                HStack { Text("停止录制"); Spacer(); Text("⌘⇧S").foregroundColor(.secondary) }
+            }
+            
+            Section("关于") {
+                HStack {
+                    Text("FreeShot")
+                    Spacer()
+                    Text("v1.0.0").foregroundColor(.secondary)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .frame(width: 380, height: 450)
+    }
 }
