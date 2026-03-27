@@ -8,11 +8,11 @@ struct ScreenshotHistoryView: View {
         VStack(spacing: 0) {
             // 标题
             HStack {
-                Text("截图历史")
+                Text(L("history.title"))
                     .font(.headline)
                 Spacer()
                 if !screenshots.isEmpty {
-                    Button("清空") {
+                    Button(L("history.clear")) {
                         ScreenshotHistory.shared.clear()
                         loadHistory()
                     }
@@ -30,7 +30,7 @@ struct ScreenshotHistoryView: View {
                     Image(systemName: "photo.on.rectangle")
                         .font(.system(size: 40))
                         .foregroundColor(.secondary)
-                    Text("暂无截图历史")
+                    Text(L("history.empty"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -44,14 +44,14 @@ struct ScreenshotHistoryView: View {
                                     selectedScreenshot = url
                                 }
                                 .contextMenu {
-                                    Button("复制") {
+                                    Button(L("history.copy")) {
                                         copyToClipboard(url: url)
                                     }
-                                    Button("在 Finder 中显示") {
+                                    Button(L("history.show_in_finder")) {
                                         NSWorkspace.shared.activateFileViewerSelecting([url])
                                     }
                                     Divider()
-                                    Button("删除", role: .destructive) {
+                                    Button(L("history.delete"), role: .destructive) {
                                         ScreenshotHistory.shared.remove(at: index)
                                         loadHistory()
                                     }

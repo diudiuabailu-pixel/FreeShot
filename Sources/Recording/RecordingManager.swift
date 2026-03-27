@@ -78,19 +78,19 @@ final class RecordingManager: NSObject {
         var errorDescription: String? {
             switch self {
             case .screenRecordingPermissionDenied:
-                return "未授予屏幕录制权限。请到 系统设置 > 隐私与安全性 > 屏幕录制 中开启 FreeShot。"
+                return L("error.screen_permission")
             case .accessibilityPermissionDenied:
-                return "显示按键需要辅助功能权限。请到 系统设置 > 隐私与安全性 > 辅助功能 中开启 FreeShot。"
+                return L("error.accessibility_permission")
             case .noDisplayAvailable:
-                return "没有找到可录制的显示器。"
+                return L("error.no_display")
             case .invalidRegion:
-                return "录制区域无效，请重新选择。"
+                return L("error.invalid_region")
             case .fileCreationFailed(let message):
-                return "创建录制文件失败：\(message)"
+                return L("error.file_creation", message)
             case .cameraPermissionDenied:
-                return "未授予摄像头权限。请到 系统设置 > 隐私与安全性 > 摄像头 中开启 FreeShot。"
+                return L("error.camera_permission")
             case .microphonePermissionDenied:
-                return "未授予麦克风权限。请到 系统设置 > 隐私与安全性 > 麦克风 中开启 FreeShot。"
+                return L("error.mic_permission")
             }
         }
     }
@@ -392,7 +392,7 @@ final class RecordingManager: NSObject {
         videoInput?.expectsMediaDataInRealTime = true
 
         guard let videoInput else {
-            throw RecordingPreparationError.fileCreationFailed("无法创建视频输入")
+            throw RecordingPreparationError.fileCreationFailed(L("error.recording_failed"))
         }
         assetWriter?.add(videoInput)
 
@@ -413,7 +413,7 @@ final class RecordingManager: NSObject {
         }
 
         guard assetWriter?.startWriting() == true else {
-            throw RecordingPreparationError.fileCreationFailed(assetWriter?.error?.localizedDescription ?? "未知错误")
+            throw RecordingPreparationError.fileCreationFailed(assetWriter?.error?.localizedDescription ?? L("error.unknown_write"))
         }
         // Bug 1: Do NOT startSession here; wait for first sample buffer timestamp
         // assetWriter?.startSession(atSourceTime: .zero) -- REMOVED
@@ -510,7 +510,7 @@ final class RecordingManager: NSObject {
                 self.lastPauseTime = .zero
 
                 guard writer?.status == .completed else {
-                    let errorMsg = writer?.error?.localizedDescription ?? "写入文件时发生未知错误"
+                    let errorMsg = writer?.error?.localizedDescription ?? L("error.unknown_write")
                     self.present(error: RecordingPreparationError.fileCreationFailed(errorMsg))
                     if let url { try? FileManager.default.removeItem(at: url) }
                     return
@@ -519,7 +519,7 @@ final class RecordingManager: NSObject {
                 guard let url,
                       FileManager.default.fileExists(atPath: url.path),
                       (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? UInt64) ?? 0 > 0 else {
-                    self.present(error: RecordingPreparationError.fileCreationFailed("录制文件为空或不存在"))
+                    self.present(error: RecordingPreparationError.fileCreationFailed(L("error.empty_file")))
                     return
                 }
 
@@ -553,9 +553,9 @@ final class RecordingManager: NSObject {
         DispatchQueue.main.async {
             let alert = NSAlert()
             alert.alertStyle = .warning
-            alert.messageText = "录制失败"
+            alert.messageText = L("error.recording_failed")
             alert.informativeText = message
-            alert.addButton(withTitle: "好")
+            alert.addButton(withTitle: L("error.ok"))
             alert.runModal()
         }
     }

@@ -35,7 +35,7 @@ class AnnotationWindow: NSWindow {
             defer: false
         )
         
-        self.title = "标注截图"
+        self.title = L("annotation.title")
         self.center()
         
         setupUI()
@@ -57,10 +57,10 @@ class AnnotationWindow: NSWindow {
         stackView.spacing = 10
         
         let tools: [(String, String, AnnotationTool)] = [
-            ("arrow.up.right", "箭头", .arrow),
-            ("rectangle", "矩形", .rectangle),
-            ("circle", "圆形", .circle),
-            ("textformat", "文字", .text)
+            ("arrow.up.right", L("annotation.arrow"), .arrow),
+            ("rectangle", L("annotation.rectangle"), .rectangle),
+            ("circle", L("annotation.circle"), .circle),
+            ("textformat", L("annotation.text"), .text)
         ]
         
         for (icon, title, tool) in tools {
@@ -77,8 +77,8 @@ class AnnotationWindow: NSWindow {
         
         let saveButton = NSButton()
         saveButton.bezelStyle = .texturedRounded
-        saveButton.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: "保存")
-        saveButton.title = " 保存"
+        saveButton.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: L("preview.save"))
+        saveButton.title = " \(L("preview.save"))"
         saveButton.imagePosition = .imageLeading
         saveButton.target = self
         saveButton.action = #selector(saveImage)
@@ -264,9 +264,9 @@ extension AnnotationWindow {
     
     private func showTextInput(at point: NSPoint) {
         let alert = NSAlert()
-        alert.messageText = "添加文字"
-        alert.addButton(withTitle: "确定")
-        alert.addButton(withTitle: "取消")
+        alert.messageText = L("annotation.add_text")
+        alert.addButton(withTitle: L("annotation.ok"))
+        alert.addButton(withTitle: L("annotation.cancel"))
         
         let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 200, height: 24))
         alert.accessoryView = textField

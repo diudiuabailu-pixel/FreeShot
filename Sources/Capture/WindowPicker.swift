@@ -16,7 +16,7 @@ class WindowPickerWindow: NSWindow {
             defer: false
         )
         
-        self.title = "选择窗口"
+        self.title = L("window_picker.title")
         self.center()
         self.setupUI()
     }
@@ -32,7 +32,7 @@ class WindowPickerWindow: NSWindow {
         tableView.target = self
         
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("window"))
-        column.title = "窗口"
+        column.title = L("window_picker.column")
         column.width = 380
         tableView.addTableColumn(column)
         tableView.headerView = nil

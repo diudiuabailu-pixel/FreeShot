@@ -36,7 +36,7 @@ class CountdownWindow: NSWindow {
         countdownLabel.textColor = .white
         countdownLabel.alignment = .center
         
-        let tipLabel = NSTextField(labelWithString: "即将开始录制...")
+        let tipLabel = NSTextField(labelWithString: L("countdown.starting"))
         tipLabel.frame = NSRect(x: 0, y: 20, width: 200, height: 30)
         tipLabel.font = NSFont.systemFont(ofSize: 16)
         tipLabel.textColor = .white
