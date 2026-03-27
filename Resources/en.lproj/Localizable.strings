@@ -1,0 +1,152 @@
+/* FreeShot English Localization */
+
+// MARK: - Tabs & Navigation
+"tab.screenshot" = "Screenshot";
+"tab.recording" = "Recording";
+"nav.history" = "History";
+"nav.settings" = "Settings";
+
+// MARK: - Screenshot Tab
+"screenshot.capture_region" = "Capture Region";
+"screenshot.capture_window" = "Capture Window";
+"screenshot.capture_fullscreen" = "Capture Full Screen";
+"screenshot.scroll_capture" = "Scroll Capture";
+"screenshot.multi_display" = "Multi-Display";
+"screenshot.timer" = "Timer";
+"screenshot.format" = "Format";
+
+// MARK: - Recording Tab
+"recording.show_webcam" = "Show webcam";
+"recording.camera" = "Camera";
+"recording.position" = "Position";
+"recording.position.top_left" = "Top Left";
+"recording.position.top_right" = "Top Right";
+"recording.position.bottom_left" = "Bottom Left";
+"recording.position.bottom_right" = "Bottom Right";
+"recording.size" = "Size";
+"recording.size.small" = "Small";
+"recording.size.medium" = "Medium";
+"recording.size.large" = "Large";
+"recording.timer" = "Timer";
+"recording.display" = "Display";
+"recording.show_clicks" = "Show clicks";
+"recording.show_keystrokes" = "Show keystrokes";
+"recording.microphone" = "Microphone";
+"recording.system_audio" = "System Audio";
+"recording.audio" = "Audio";
+"recording.region" = "Region";
+"recording.fullscreen" = "Full Screen";
+"recording.camera_on" = "Camera On";
+"recording.mic_note" = "Microphone recording requires macOS 14.0+. Earlier versions support system audio only.";
+
+// MARK: - Timer Options
+"timer.none" = "None";
+"timer.3s" = "3s";
+"timer.5s" = "5s";
+"timer.10s" = "10s";
+
+// MARK: - Settings
+"settings.title" = "FreeShot Settings";
+"settings.screenshot" = "Screenshot Settings";
+"settings.image_format" = "Image Format";
+"settings.save_location" = "Save Location";
+"settings.desktop" = "Desktop";
+"settings.choose" = "Choose...";
+"settings.recording" = "Recording Settings";
+"settings.video_quality" = "Video Quality";
+"settings.quality.high" = "High";
+"settings.quality.medium" = "Medium";
+"settings.quality.low" = "Low";
+"settings.general" = "General";
+"settings.launch_at_login" = "Launch at Login";
+"settings.shortcuts" = "Shortcuts";
+"settings.shortcut.region_screenshot" = "Region Screenshot";
+"settings.shortcut.window_screenshot" = "Window Screenshot";
+"settings.shortcut.fullscreen_screenshot" = "Full Screen Screenshot";
+"settings.shortcut.region_recording" = "Region Recording";
+"settings.shortcut.fullscreen_recording" = "Full Screen Recording";
+"settings.shortcut.stop_recording" = "Stop Recording";
+"settings.about" = "About";
+
+// MARK: - Preview Window
+"preview.copy" = "Copy";
+"preview.save" = "Save";
+"preview.annotate" = "Annotate";
+"preview.open" = "Open";
+
+// MARK: - Annotation
+"annotation.title" = "Annotate Screenshot";
+"annotation.arrow" = "Arrow";
+"annotation.rectangle" = "Rectangle";
+"annotation.circle" = "Circle";
+"annotation.text" = "Text";
+"annotation.add_text" = "Add Text";
+"annotation.ok" = "OK";
+"annotation.cancel" = "Cancel";
+
+// MARK: - OCR
+"ocr.title" = "OCR Result";
+"ocr.no_text" = "No text recognized";
+"ocr.copied" = "Text copied to clipboard";
+"ocr.failed" = "Recognition failed: %@";
+"ocr.ok" = "OK";
+
+// MARK: - History
+"history.title" = "Screenshot History";
+"history.clear" = "Clear";
+"history.empty" = "No screenshot history";
+"history.copy" = "Copy";
+"history.show_in_finder" = "Show in Finder";
+"history.delete" = "Delete";
+
+// MARK: - Window Picker
+"window_picker.title" = "Select Window";
+"window_picker.column" = "Window";
+
+// MARK: - Display Picker
+"display_picker.title" = "Select Display";
+"display_picker.cancel" = "Cancel";
+"display_picker.capture" = "Capture";
+
+// MARK: - Recording Errors
+"error.screen_permission" = "Screen recording permission not granted. Go to System Settings > Privacy & Security > Screen Recording to enable FreeShot.";
+"error.accessibility_permission" = "Keystroke display requires Accessibility permission. Go to System Settings > Privacy & Security > Accessibility to enable FreeShot.";
+"error.no_display" = "No recordable display found.";
+"error.invalid_region" = "Invalid recording region. Please reselect.";
+"error.file_creation" = "Failed to create recording file: %@";
+"error.camera_permission" = "Camera permission not granted. Go to System Settings > Privacy & Security > Camera to enable FreeShot.";
+"error.mic_permission" = "Microphone permission not granted. Go to System Settings > Privacy & Security > Microphone to enable FreeShot.";
+"error.recording_failed" = "Recording Failed";
+"error.ok" = "OK";
+"error.empty_file" = "Recording file is empty or missing";
+"error.unknown_write" = "Unknown error occurred while writing file";
+
+// MARK: - Countdown
+"countdown.starting" = "Recording starting...";
+
+// MARK: - Scroll Capture
+"scroll.capturing" = "Scroll capturing...";
+"scroll.press_esc" = "Press ESC to stop";
+"scroll.count" = "Scroll capturing... %d frames";
+"scroll.auto_stop" = "Auto-save when scrolling stops / ESC to stop";
+
+// MARK: - Video Trimmer
+"trimmer.select_video" = "Select video to trim";
+"trimmer.title" = "Trim Video";
+"trimmer.duration" = "Video duration: %.1f seconds";
+"trimmer.start_time" = "Start time (seconds):";
+"trimmer.end_time" = "End time (seconds):";
+"trimmer.trim" = "Trim";
+"trimmer.cancel" = "Cancel";
+
+// MARK: - GIF Exporter
+"gif.select_video" = "Select video to convert to GIF";
+"gif.save_title" = "Save GIF File";
+
+// MARK: - Touch Bar
+"touchbar.screenshot" = "Screenshot";
+"touchbar.window" = "Window";
+"touchbar.fullscreen" = "Full Screen";
+"touchbar.record" = "Record";
+"touchbar.record_full" = "Record Full";
+"touchbar.stop" = "Stop";

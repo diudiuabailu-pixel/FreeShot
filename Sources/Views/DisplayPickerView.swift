@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
 
 struct DisplayPickerView: View {
     @State private var displays: [(id: CGDirectDisplayID, name: String, width: Int, height: Int)] = []
@@ -7,7 +8,7 @@ struct DisplayPickerView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Text("选择显示器")
+            Text(L("display_picker.title"))
                 .font(.headline)
             
             if displays.isEmpty {
@@ -35,14 +36,14 @@ struct DisplayPickerView: View {
             }
             
             HStack {
-                Button("取消") {
+                Button(L("display_picker.cancel")) {
                     NSApp.keyWindow?.close()
                 }
                 .keyboardShortcut(.cancelAction)
                 
                 Spacer()
                 
-                Button("截取") {
+                Button(L("display_picker.capture")) {
                     captureSelectedDisplay()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -110,7 +111,7 @@ class DisplayPickerWindow: NSWindow {
             defer: false
         )
         
-        self.title = "选择显示器"
+        self.title = L("display_picker.title")
         self.center()
         
         let hostingView = NSHostingView(rootView: DisplayPickerView())

@@ -1,6 +1,7 @@
 import Foundation
 import AppKit
 import ScreenCaptureKit
+import UniformTypeIdentifiers
 
 class AutoScrollCaptureManager {
     static let shared = AutoScrollCaptureManager()
@@ -222,13 +223,13 @@ class AutoScrollIndicatorWindow: NSWindow {
         container.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.8).cgColor
         container.layer?.cornerRadius = 12
         
-        progressLabel = NSTextField(labelWithString: "滚动截图中... 0 张")
+        progressLabel = NSTextField(labelWithString: L("scroll.count", 0))
         progressLabel.frame = NSRect(x: 0, y: 20, width: 200, height: 20)
         progressLabel.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         progressLabel.textColor = .white
         progressLabel.alignment = .center
         
-        let tip = NSTextField(labelWithString: "停止滚动自动保存 / ESC 手动停止")
+        let tip = NSTextField(labelWithString: L("scroll.auto_stop"))
         tip.frame = NSRect(x: 0, y: 5, width: 200, height: 15)
         tip.font = NSFont.systemFont(ofSize: 10)
         tip.textColor = .white.withAlphaComponent(0.7)
@@ -251,6 +252,6 @@ class AutoScrollIndicatorWindow: NSWindow {
     }
     
     func updateProgress(_ count: Int) {
-        progressLabel.stringValue = "滚动截图中... \(count) 张"
+        progressLabel.stringValue = L("scroll.count", count)
     }
 }

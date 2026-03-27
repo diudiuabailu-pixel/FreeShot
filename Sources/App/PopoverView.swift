@@ -4,9 +4,16 @@ import AppKit
 struct PopoverView: View {
     @State private var selectedTab: Tab = .screenshot
 
-    enum Tab: String, CaseIterable {
-        case screenshot = "Screenshot"
-        case recording = "Recording"
+    enum Tab: CaseIterable {
+        case screenshot
+        case recording
+
+        var title: String {
+            switch self {
+            case .screenshot: return L("tab.screenshot")
+            case .recording: return L("tab.recording")
+            }
+        }
     }
 
     var body: some View {
@@ -28,7 +35,7 @@ struct PopoverView: View {
             HStack(spacing: 0) {
                 ForEach(Tab.allCases, id: \.self) { tab in
                     TabBarButton(
-                        title: tab.rawValue,
+                        title: tab.title,
                         isSelected: selectedTab == tab
                     ) {
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -56,14 +63,14 @@ struct PopoverView: View {
             Divider()
 
             HStack {
-                BottomButton(icon: "clock.arrow.circlepath", title: "History") {
+                BottomButton(icon: "clock.arrow.circlepath", title: L("nav.history")) {
                     let historyWindow = NSWindow(
                         contentRect: NSRect(x: 0, y: 0, width: 350, height: 400),
                         styleMask: [.titled, .closable, .resizable],
                         backing: .buffered,
                         defer: false
                     )
-                    historyWindow.title = "截图历史"
+                    historyWindow.title = L("history.title")
                     historyWindow.center()
                     historyWindow.contentView = NSHostingController(rootView: ScreenshotHistoryView()).view
                     historyWindow.makeKeyAndOrderFront(nil)
@@ -71,14 +78,14 @@ struct PopoverView: View {
 
                 Spacer()
 
-                BottomButton(icon: "gearshape", title: "Settings") {
+                BottomButton(icon: "gearshape", title: L("nav.settings")) {
                     let settingsWindow = NSWindow(
                         contentRect: NSRect(x: 0, y: 0, width: 400, height: 300),
                         styleMask: [.titled, .closable],
                         backing: .buffered,
                         defer: false
                     )
-                    settingsWindow.title = "FreeShot 设置"
+                    settingsWindow.title = L("settings.title")
                     settingsWindow.center()
                     settingsWindow.contentView = NSHostingController(rootView: SettingsView()).view
                     settingsWindow.makeKeyAndOrderFront(nil)
@@ -149,7 +156,7 @@ struct ScreenshotTabView: View {
         VStack(spacing: 8) {
             CaptureButton(
                 icon: "selection.pin.in.out",
-                title: "Capture Region",
+                title: L("screenshot.capture_region"),
                 shortcut: "⌘⇧4",
                 color: .blue
             ) {
@@ -159,7 +166,7 @@ struct ScreenshotTabView: View {
 
             CaptureButton(
                 icon: "macwindow",
-                title: "Capture Window",
+                title: L("screenshot.capture_window"),
                 shortcut: "⌘⇧5",
                 color: .purple
             ) {
@@ -169,7 +176,7 @@ struct ScreenshotTabView: View {
 
             CaptureButton(
                 icon: "rectangle.fill",
-                title: "Capture Full Screen",
+                title: L("screenshot.capture_fullscreen"),
                 shortcut: "⌘⇧6",
                 color: .green
             ) {
@@ -179,7 +186,7 @@ struct ScreenshotTabView: View {
 
             CaptureButton(
                 icon: "arrow.up.and.down",
-                title: "Scroll Capture",
+                title: L("screenshot.scroll_capture"),
                 shortcut: "",
                 color: .orange
             ) {
@@ -188,7 +195,7 @@ struct ScreenshotTabView: View {
 
             CaptureButton(
                 icon: "display",
-                title: "Multi-Display",
+                title: L("screenshot.multi_display"),
                 shortcut: "",
                 color: .purple
             ) {
@@ -202,14 +209,14 @@ struct ScreenshotTabView: View {
             GroupBox {
                 VStack(spacing: 0) {
                     HStack {
-                        Label("Timer", systemImage: "timer")
+                        Label(L("screenshot.timer"), systemImage: "timer")
                             .font(.system(size: 13))
                         Spacer()
                         Picker("", selection: $timerSelection) {
-                            Text("None").tag(0)
-                            Text("3s").tag(1)
-                            Text("5s").tag(2)
-                            Text("10s").tag(3)
+                            Text(L("timer.none")).tag(0)
+                            Text(L("timer.3s")).tag(1)
+                            Text(L("timer.5s")).tag(2)
+                            Text(L("timer.10s")).tag(3)
                         }
                         .pickerStyle(.segmented)
                         .frame(width: 180)
@@ -218,7 +225,7 @@ struct ScreenshotTabView: View {
                     Divider()
 
                     HStack {
-                        Label("Format", systemImage: "photo")
+                        Label(L("screenshot.format"), systemImage: "photo")
                             .font(.system(size: 13))
                         Spacer()
                         Picker("", selection: $imageFormat) {
@@ -268,7 +275,7 @@ struct RecordingOptionsView: View {
             GroupBox {
                 VStack(spacing: 0) {
                     Toggle(isOn: $showCamera) {
-                        Label("Show webcam", systemImage: "camera.fill")
+                        Label(L("recording.show_webcam"), systemImage: "camera.fill")
                             .font(.system(size: 13))
                     }
                     .toggleStyle(.switch)
@@ -278,14 +285,14 @@ struct RecordingOptionsView: View {
                         Divider()
 
                         HStack {
-                            Text("Position")
+                            Text(L("recording.position"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                             Picker("", selection: $cameraPosition) {
-                                Text("Top Left").tag(0)
-                                Text("Top Right").tag(1)
-                                Text("Bottom Left").tag(2)
-                                Text("Bottom Right").tag(3)
+                                Text(L("recording.position.top_left")).tag(0)
+                                Text(L("recording.position.top_right")).tag(1)
+                                Text(L("recording.position.bottom_left")).tag(2)
+                                Text(L("recording.position.bottom_right")).tag(3)
                             }
                             .pickerStyle(.segmented)
                             .controlSize(.small)
@@ -295,13 +302,13 @@ struct RecordingOptionsView: View {
                         Divider()
 
                         HStack {
-                            Text("Size")
+                            Text(L("recording.size"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                             Picker("", selection: $cameraSize) {
-                                Text("Small").tag(0)
-                                Text("Medium").tag(1)
-                                Text("Large").tag(2)
+                                Text(L("recording.size.small")).tag(0)
+                                Text(L("recording.size.medium")).tag(1)
+                                Text(L("recording.size.large")).tag(2)
                             }
                             .pickerStyle(.segmented)
                             .controlSize(.small)
@@ -309,27 +316,27 @@ struct RecordingOptionsView: View {
                     }
                 }
             } label: {
-                Label("Camera", systemImage: "camera.fill")
+                Label(L("recording.camera"), systemImage: "camera.fill")
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
 
             GroupBox {
                 HStack {
-                    Text("Timer")
+                    Text(L("recording.timer"))
                         .font(.system(size: 13))
                     Spacer()
                     Picker("", selection: $countdown) {
-                        Text("None").tag(0)
-                        Text("3s").tag(1)
-                        Text("5s").tag(2)
-                        Text("10s").tag(3)
+                        Text(L("timer.none")).tag(0)
+                        Text(L("timer.3s")).tag(1)
+                        Text(L("timer.5s")).tag(2)
+                        Text(L("timer.10s")).tag(3)
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 180)
                 }
             } label: {
-                Label("Timer", systemImage: "timer")
+                Label(L("recording.timer"), systemImage: "timer")
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
@@ -337,7 +344,7 @@ struct RecordingOptionsView: View {
             GroupBox {
                 VStack(spacing: 0) {
                     Toggle(isOn: $showClicks) {
-                        Label("Show clicks", systemImage: "cursorarrow.click")
+                        Label(L("recording.show_clicks"), systemImage: "cursorarrow.click")
                             .font(.system(size: 13))
                     }
                     .toggleStyle(.switch)
@@ -346,14 +353,14 @@ struct RecordingOptionsView: View {
                     Divider()
 
                     Toggle(isOn: $showKeystrokes) {
-                        Label("Show keystrokes", systemImage: "keyboard")
+                        Label(L("recording.show_keystrokes"), systemImage: "keyboard")
                             .font(.system(size: 13))
                     }
                     .toggleStyle(.switch)
                     .controlSize(.small)
                 }
             } label: {
-                Label("Display", systemImage: "menubar.dock.rectangle")
+                Label(L("recording.display"), systemImage: "menubar.dock.rectangle")
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
@@ -361,7 +368,7 @@ struct RecordingOptionsView: View {
             GroupBox {
                 VStack(spacing: 0) {
                     Toggle(isOn: $micEnabled) {
-                        Label("Microphone", systemImage: "mic.fill")
+                        Label(L("recording.microphone"), systemImage: "mic.fill")
                             .font(.system(size: 13))
                     }
                     .toggleStyle(.switch)
@@ -370,14 +377,14 @@ struct RecordingOptionsView: View {
                     Divider()
 
                     Toggle(isOn: $systemAudio) {
-                        Label("System Audio", systemImage: "speaker.wave.2.fill")
+                        Label(L("recording.system_audio"), systemImage: "speaker.wave.2.fill")
                             .font(.system(size: 13))
                     }
                     .toggleStyle(.switch)
                     .controlSize(.small)
                 }
             } label: {
-                Label("Audio", systemImage: "waveform")
+                Label(L("recording.audio"), systemImage: "waveform")
                     .font(.system(size: 12, weight: .medium))
             }
             .groupBoxStyle(DefaultGroupBoxStyle())
@@ -386,19 +393,19 @@ struct RecordingOptionsView: View {
                 .padding(.vertical, 4)
 
             if micEnabled && !systemAudio {
-                Text("麦克风录制需要 macOS 14.0+，低版本仅支持系统音频。")
+                Text(L("recording.mic_note"))
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             HStack(spacing: 8) {
-                RecordButton(title: "Region", icon: "selection.pin.in.out") {
+                RecordButton(title: L("recording.region"), icon: "selection.pin.in.out") {
                     applyRecordingOptions()
                     manager.startRegionRecording(includeCamera: showCamera)
                 }
 
-                RecordButton(title: "Full Screen", icon: "macwindow") {
+                RecordButton(title: L("recording.fullscreen"), icon: "macwindow") {
                     applyRecordingOptions()
                     manager.startFullScreenRecording(includeCamera: showCamera)
                 }
@@ -526,7 +533,7 @@ struct RecordingActiveView: View {
             if state.includeCamera {
                 HStack {
                     Image(systemName: "camera.fill")
-                    Text("Camera On")
+                    Text(L("recording.camera_on"))
                     Spacer()
                 }
                 .font(.system(size: 12))
@@ -661,20 +668,20 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
-            Section("截图设置") {
-                Picker("图片格式", selection: $imageFormat) {
+            Section(L("settings.screenshot")) {
+                Picker(L("settings.image_format"), selection: $imageFormat) {
                     Text("PNG").tag("png")
                     Text("JPEG").tag("jpeg")
                     Text("TIFF").tag("tiff")
                 }
-                
+
                 HStack {
-                    Text("保存位置")
+                    Text(L("settings.save_location"))
                     Spacer()
-                    Text(saveDirectory.isEmpty ? "桌面" : saveDirectory)
+                    Text(saveDirectory.isEmpty ? L("settings.desktop") : saveDirectory)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
-                    Button("选择...") {
+                    Button(L("settings.choose")) {
                         let panel = NSOpenPanel()
                         panel.canChooseDirectories = true
                         panel.canChooseFiles = false
@@ -685,28 +692,28 @@ struct SettingsView: View {
                 }
             }
             
-            Section("录屏设置") {
-                Picker("视频质量", selection: $videoQuality) {
-                    Text("高").tag("high")
-                    Text("中").tag("medium")
-                    Text("低").tag("low")
+            Section(L("settings.recording")) {
+                Picker(L("settings.video_quality"), selection: $videoQuality) {
+                    Text(L("settings.quality.high")).tag("high")
+                    Text(L("settings.quality.medium")).tag("medium")
+                    Text(L("settings.quality.low")).tag("low")
                 }
             }
-            
-            Section("通用") {
-                Toggle("开机自动启动", isOn: $launchAtLogin)
+
+            Section(L("settings.general")) {
+                Toggle(L("settings.launch_at_login"), isOn: $launchAtLogin)
             }
-            
-            Section("快捷键") {
-                HStack { Text("区域截图"); Spacer(); Text("⌘⇧4").foregroundColor(.secondary) }
-                HStack { Text("窗口截图"); Spacer(); Text("⌘⇧5").foregroundColor(.secondary) }
-                HStack { Text("全屏截图"); Spacer(); Text("⌘⇧6").foregroundColor(.secondary) }
-                HStack { Text("区域录屏"); Spacer(); Text("⌘⇧R").foregroundColor(.secondary) }
-                HStack { Text("全屏录屏"); Spacer(); Text("⌘⇧F").foregroundColor(.secondary) }
-                HStack { Text("停止录制"); Spacer(); Text("⌘⇧S").foregroundColor(.secondary) }
+
+            Section(L("settings.shortcuts")) {
+                HStack { Text(L("settings.shortcut.region_screenshot")); Spacer(); Text("⌘⇧4").foregroundColor(.secondary) }
+                HStack { Text(L("settings.shortcut.window_screenshot")); Spacer(); Text("⌘⇧5").foregroundColor(.secondary) }
+                HStack { Text(L("settings.shortcut.fullscreen_screenshot")); Spacer(); Text("⌘⇧6").foregroundColor(.secondary) }
+                HStack { Text(L("settings.shortcut.region_recording")); Spacer(); Text("⌘⇧R").foregroundColor(.secondary) }
+                HStack { Text(L("settings.shortcut.fullscreen_recording")); Spacer(); Text("⌘⇧F").foregroundColor(.secondary) }
+                HStack { Text(L("settings.shortcut.stop_recording")); Spacer(); Text("⌘⇧S").foregroundColor(.secondary) }
             }
-            
-            Section("关于") {
+
+            Section(L("settings.about")) {
                 HStack {
                     Text("FreeShot")
                     Spacer()

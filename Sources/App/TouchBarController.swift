@@ -40,45 +40,45 @@ class TouchBarController: NSObject, NSTouchBarDelegate {
         switch identifier {
         case .captureRegion:
             let item = NSCustomTouchBarItem(identifier: identifier)
-            let button = NSButton(title: "📐 截图", target: self, action: #selector(captureRegion))
+            let button = NSButton(title: L("touchbar.screenshot"), target: self, action: #selector(captureRegion))
             item.view = button
-            item.customizationLabel = "截取区域"
+            item.customizationLabel = L("settings.shortcut.region_screenshot")
             return item
             
         case .captureWindow:
             let item = NSCustomTouchBarItem(identifier: identifier)
-            let button = NSButton(title: "🪟 窗口", target: self, action: #selector(captureWindow))
+            let button = NSButton(title: L("touchbar.window"), target: self, action: #selector(captureWindow))
             item.view = button
-            item.customizationLabel = "截取窗口"
+            item.customizationLabel = L("settings.shortcut.window_screenshot")
             return item
             
         case .captureFullScreen:
             let item = NSCustomTouchBarItem(identifier: identifier)
-            let button = NSButton(title: "🖥️ 全屏", target: self, action: #selector(captureFullScreen))
+            let button = NSButton(title: L("touchbar.fullscreen"), target: self, action: #selector(captureFullScreen))
             item.view = button
-            item.customizationLabel = "截取全屏"
+            item.customizationLabel = L("settings.shortcut.fullscreen_screenshot")
             return item
             
         case .recordRegion:
             let item = NSCustomTouchBarItem(identifier: identifier)
-            let button = NSButton(title: "🔴 录屏", target: self, action: #selector(recordRegion))
+            let button = NSButton(title: L("touchbar.record"), target: self, action: #selector(recordRegion))
             item.view = button
-            item.customizationLabel = "区域录屏"
+            item.customizationLabel = L("settings.shortcut.region_recording")
             return item
             
         case .recordFullScreen:
             let item = NSCustomTouchBarItem(identifier: identifier)
-            let button = NSButton(title: "🔴 全屏", target: self, action: #selector(recordFullScreen))
+            let button = NSButton(title: L("touchbar.record_full"), target: self, action: #selector(recordFullScreen))
             item.view = button
-            item.customizationLabel = "全屏录屏"
+            item.customizationLabel = L("settings.shortcut.fullscreen_recording")
             return item
             
         case .stopRecording:
             let item = NSCustomTouchBarItem(identifier: identifier)
-            let button = NSButton(title: "⏹️ 停止", target: self, action: #selector(stopRecording))
+            let button = NSButton(title: L("touchbar.stop"), target: self, action: #selector(stopRecording))
             button.bezelColor = .red
             item.view = button
-            item.customizationLabel = "停止录屏"
+            item.customizationLabel = L("settings.shortcut.stop_recording")
             return item
             
         default:

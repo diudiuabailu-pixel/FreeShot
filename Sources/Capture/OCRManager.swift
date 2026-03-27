@@ -72,13 +72,13 @@ class OCRManager {
                 switch result {
                 case .success(let text):
                     if text.isEmpty {
-                        self.showAlert(message: "未识别到文字")
+                        self.showAlert(message: L("ocr.no_text"))
                     } else {
                         onCopy(text)
-                        self.showAlert(message: "文字已复制到剪贴板")
+                        self.showAlert(message: L("ocr.copied"))
                     }
                 case .failure(let error):
-                    self.showAlert(message: "识别失败: \(error.localizedDescription)")
+                    self.showAlert(message: L("ocr.failed", error.localizedDescription))
                 }
             }
         }
@@ -86,10 +86,10 @@ class OCRManager {
     
     private func showAlert(message: String) {
         let alert = NSAlert()
-        alert.messageText = "OCR 识别结果"
+        alert.messageText = L("ocr.title")
         alert.informativeText = message
         alert.alertStyle = .informational
-        alert.addButton(withTitle: "确定")
+        alert.addButton(withTitle: L("ocr.ok"))
         alert.runModal()
     }
 }

@@ -78,7 +78,7 @@ class GifExporter {
         openPanel.canChooseFiles = true
         openPanel.canChooseDirectories = false
         openPanel.allowsMultipleSelection = false
-        openPanel.message = "选择要转换为 GIF 的视频"
+        openPanel.message = L("gif.select_video")
         
         openPanel.begin { response in
             guard response == .OK, let videoURL = openPanel.url else {
@@ -90,7 +90,7 @@ class GifExporter {
             let savePanel = NSSavePanel()
             savePanel.allowedContentTypes = [.gif]
             savePanel.nameFieldStringValue = videoURL.deletingPathExtension().lastPathComponent + ".gif"
-            savePanel.message = "保存 GIF 文件"
+            savePanel.message = L("gif.save_title")
             
             savePanel.begin { saveResponse in
                 guard saveResponse == .OK, let outputURL = savePanel.url else {

@@ -155,13 +155,13 @@ class ScrollCaptureIndicator: NSWindow {
         container.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.8).cgColor
         container.layer?.cornerRadius = 12
         
-        let label = NSTextField(labelWithString: "滚动截图中...")
+        let label = NSTextField(labelWithString: L("scroll.capturing"))
         label.frame = NSRect(x: 0, y: 20, width: 200, height: 20)
         label.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         label.textColor = .white
         label.alignment = .center
         
-        let tip = NSTextField(labelWithString: "按 ESC 停止")
+        let tip = NSTextField(labelWithString: L("scroll.press_esc"))
         tip.frame = NSRect(x: 0, y: 5, width: 200, height: 15)
         tip.font = NSFont.systemFont(ofSize: 11)
         tip.textColor = .white.withAlphaComponent(0.7)

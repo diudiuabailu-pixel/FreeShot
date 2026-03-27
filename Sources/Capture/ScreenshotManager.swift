@@ -1,6 +1,7 @@
 import Foundation
 import AppKit
 import ScreenCaptureKit
+import UniformTypeIdentifiers
 
 class ScreenshotManager {
     static let shared = ScreenshotManager()

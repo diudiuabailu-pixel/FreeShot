@@ -1,4 +1,5 @@
 import AppKit
+import UniformTypeIdentifiers
 
 class QuickPreviewWindow: NSWindow {
     private var screenshotImage: NSImage
@@ -63,23 +64,23 @@ class QuickPreviewWindow: NSWindow {
         buttonStack.spacing = 12
         buttonStack.frame = NSRect(x: 10, y: 10, width: width, height: 30)
         
-        let copyButton = createButton(title: "复制", icon: "doc.on.doc")
+        let copyButton = createButton(title: L("preview.copy"), icon: "doc.on.doc")
         copyButton.target = self
         copyButton.action = #selector(copyImage)
-        
-        let saveButton = createButton(title: "保存", icon: "square.and.arrow.down")
+
+        let saveButton = createButton(title: L("preview.save"), icon: "square.and.arrow.down")
         saveButton.target = self
         saveButton.action = #selector(saveImage)
-        
-        let annotateButton = createButton(title: "标注", icon: "pencil")
+
+        let annotateButton = createButton(title: L("preview.annotate"), icon: "pencil")
         annotateButton.target = self
         annotateButton.action = #selector(openAnnotate)
-        
+
         let ocrButton = createButton(title: "OCR", icon: "text.viewfinder")
         ocrButton.target = self
         ocrButton.action = #selector(recognizeText)
-        
-        let openButton = createButton(title: "打开", icon: "folder")
+
+        let openButton = createButton(title: L("preview.open"), icon: "folder")
         openButton.target = self
         openButton.action = #selector(openInFinder)
         
@@ -165,19 +166,19 @@ class QuickPreviewWindow: NSWindow {
                 pasteboard.setString(text, forType: .string)
                 
                 // 显示结果
-                self?.showMessage("文字已复制到剪贴板")
+                self?.showMessage(L("ocr.copied"))
             case .failure(let error):
-                self?.showMessage("识别失败: \(error.localizedDescription)")
+                self?.showMessage(L("ocr.failed", error.localizedDescription))
             }
         }
     }
     
     private func showMessage(_ message: String) {
         let alert = NSAlert()
-        alert.messageText = "OCR 识别"
+        alert.messageText = L("ocr.title")
         alert.informativeText = message
         alert.alertStyle = .informational
-        alert.addButton(withTitle: "确定")
+        alert.addButton(withTitle: L("ocr.ok"))
         alert.runModal()
     }
     

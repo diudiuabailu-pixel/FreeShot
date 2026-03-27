@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import AppKit
+import UniformTypeIdentifiers
 
 class VideoTrimmer {
     static let shared = VideoTrimmer()
@@ -45,7 +46,7 @@ class VideoTrimmer {
         openPanel.canChooseFiles = true
         openPanel.canChooseDirectories = false
         openPanel.allowsMultipleSelection = false
-        openPanel.message = "选择要裁剪的视频"
+        openPanel.message = L("trimmer.select_video")
         
         openPanel.begin { response in
             guard response == .OK, let inputURL = openPanel.url else {
@@ -64,22 +65,22 @@ class VideoTrimmer {
         let duration = CMTimeGetSeconds(asset.duration)
         
         let alert = NSAlert()
-        alert.messageText = "裁剪视频"
-        alert.informativeText = "视频时长: \(Int(duration))秒\n\n请输入裁剪时间（秒）:"
+        alert.messageText = L("trimmer.title")
+        alert.informativeText = L("trimmer.duration", duration)
         alert.alertStyle = .informational
-        alert.addButton(withTitle: "裁剪")
-        alert.addButton(withTitle: "取消")
+        alert.addButton(withTitle: L("trimmer.trim"))
+        alert.addButton(withTitle: L("trimmer.cancel"))
         
         // 创建输入框
         let stackView = NSStackView(frame: NSRect(x: 0, y: 0, width: 200, height: 60))
         stackView.orientation = .vertical
         stackView.spacing = 10
         
-        let startLabel = NSTextField(labelWithString: "开始时间 (秒):")
+        let startLabel = NSTextField(labelWithString: L("trimmer.start_time"))
         let startField = NSTextField(frame: NSRect(x: 0, y: 0, width: 200, height: 24))
         startField.stringValue = "0"
         
-        let endLabel = NSTextField(labelWithString: "结束时间 (秒):")
+        let endLabel = NSTextField(labelWithString: L("trimmer.end_time"))
         let endField = NSTextField(frame: NSRect(x: 0, y: 0, width: 200, height: 24))
         endField.stringValue = "\(Int(duration))"
         

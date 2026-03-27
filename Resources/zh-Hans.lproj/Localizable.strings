@@ -1,0 +1,152 @@
+/* FreeShot 中文简体本地化 */
+
+// MARK: - Tabs & Navigation
+"tab.screenshot" = "截图";
+"tab.recording" = "录屏";
+"nav.history" = "历史";
+"nav.settings" = "设置";
+
+// MARK: - Screenshot Tab
+"screenshot.capture_region" = "区域截图";
+"screenshot.capture_window" = "窗口截图";
+"screenshot.capture_fullscreen" = "全屏截图";
+"screenshot.scroll_capture" = "滚动截图";
+"screenshot.multi_display" = "多显示器";
+"screenshot.timer" = "定时器";
+"screenshot.format" = "格式";
+
+// MARK: - Recording Tab
+"recording.show_webcam" = "显示摄像头";
+"recording.camera" = "摄像头";
+"recording.position" = "位置";
+"recording.position.top_left" = "左上";
+"recording.position.top_right" = "右上";
+"recording.position.bottom_left" = "左下";
+"recording.position.bottom_right" = "右下";
+"recording.size" = "大小";
+"recording.size.small" = "小";
+"recording.size.medium" = "中";
+"recording.size.large" = "大";
+"recording.timer" = "定时器";
+"recording.display" = "显示";
+"recording.show_clicks" = "显示点击";
+"recording.show_keystrokes" = "显示按键";
+"recording.microphone" = "麦克风";
+"recording.system_audio" = "系统声音";
+"recording.audio" = "音频";
+"recording.region" = "区域录制";
+"recording.fullscreen" = "全屏录制";
+"recording.camera_on" = "摄像头已开启";
+"recording.mic_note" = "麦克风录制需要 macOS 14.0+，低版本仅支持系统音频。";
+
+// MARK: - Timer Options
+"timer.none" = "无";
+"timer.3s" = "3秒";
+"timer.5s" = "5秒";
+"timer.10s" = "10秒";
+
+// MARK: - Settings
+"settings.title" = "FreeShot 设置";
+"settings.screenshot" = "截图设置";
+"settings.image_format" = "图片格式";
+"settings.save_location" = "保存位置";
+"settings.desktop" = "桌面";
+"settings.choose" = "选择...";
+"settings.recording" = "录屏设置";
+"settings.video_quality" = "视频质量";
+"settings.quality.high" = "高";
+"settings.quality.medium" = "中";
+"settings.quality.low" = "低";
+"settings.general" = "通用";
+"settings.launch_at_login" = "开机自动启动";
+"settings.shortcuts" = "快捷键";
+"settings.shortcut.region_screenshot" = "区域截图";
+"settings.shortcut.window_screenshot" = "窗口截图";
+"settings.shortcut.fullscreen_screenshot" = "全屏截图";
+"settings.shortcut.region_recording" = "区域录屏";
+"settings.shortcut.fullscreen_recording" = "全屏录屏";
+"settings.shortcut.stop_recording" = "停止录制";
+"settings.about" = "关于";
+
+// MARK: - Preview Window
+"preview.copy" = "复制";
+"preview.save" = "保存";
+"preview.annotate" = "标注";
+"preview.open" = "打开";
+
+// MARK: - Annotation
+"annotation.title" = "标注截图";
+"annotation.arrow" = "箭头";
+"annotation.rectangle" = "矩形";
+"annotation.circle" = "圆形";
+"annotation.text" = "文字";
+"annotation.add_text" = "添加文字";
+"annotation.ok" = "确定";
+"annotation.cancel" = "取消";
+
+// MARK: - OCR
+"ocr.title" = "OCR 识别结果";
+"ocr.no_text" = "未识别到文字";
+"ocr.copied" = "文字已复制到剪贴板";
+"ocr.failed" = "识别失败: %@";
+"ocr.ok" = "确定";
+
+// MARK: - History
+"history.title" = "截图历史";
+"history.clear" = "清空";
+"history.empty" = "暂无截图历史";
+"history.copy" = "复制";
+"history.show_in_finder" = "在 Finder 中显示";
+"history.delete" = "删除";
+
+// MARK: - Window Picker
+"window_picker.title" = "选择窗口";
+"window_picker.column" = "窗口";
+
+// MARK: - Display Picker
+"display_picker.title" = "选择显示器";
+"display_picker.cancel" = "取消";
+"display_picker.capture" = "截取";
+
+// MARK: - Recording Errors
+"error.screen_permission" = "未授予屏幕录制权限。请到 系统设置 > 隐私与安全性 > 屏幕录制 中开启 FreeShot。";
+"error.accessibility_permission" = "显示按键需要辅助功能权限。请到 系统设置 > 隐私与安全性 > 辅助功能 中开启 FreeShot。";
+"error.no_display" = "没有找到可录制的显示器。";
+"error.invalid_region" = "录制区域无效，请重新选择。";
+"error.file_creation" = "创建录制文件失败：%@";
+"error.camera_permission" = "未授予摄像头权限。请到 系统设置 > 隐私与安全性 > 摄像头 中开启 FreeShot。";
+"error.mic_permission" = "未授予麦克风权限。请到 系统设置 > 隐私与安全性 > 麦克风 中开启 FreeShot。";
+"error.recording_failed" = "录制失败";
+"error.ok" = "好";
+"error.empty_file" = "录制文件为空或不存在";
+"error.unknown_write" = "写入文件时发生未知错误";
+
+// MARK: - Countdown
+"countdown.starting" = "即将开始录制...";
+
+// MARK: - Scroll Capture
+"scroll.capturing" = "滚动截图中...";
+"scroll.press_esc" = "按 ESC 停止";
+"scroll.count" = "滚动截图中... %d 张";
+"scroll.auto_stop" = "停止滚动自动保存 / ESC 手动停止";
+
+// MARK: - Video Trimmer
+"trimmer.select_video" = "选择要裁剪的视频";
+"trimmer.title" = "裁剪视频";
+"trimmer.duration" = "视频时长: %.1f 秒";
+"trimmer.start_time" = "开始时间 (秒):";
+"trimmer.end_time" = "结束时间 (秒):";
+"trimmer.trim" = "裁剪";
+"trimmer.cancel" = "取消";
+
+// MARK: - GIF Exporter
+"gif.select_video" = "选择要转换为 GIF 的视频";
+"gif.save_title" = "保存 GIF 文件";
+
+// MARK: - Touch Bar
+"touchbar.screenshot" = "📐 截图";
+"touchbar.window" = "🪟 窗口";
+"touchbar.fullscreen" = "🖥️ 全屏";
+"touchbar.record" = "🔴 录屏";
+"touchbar.record_full" = "🔴 全屏";
+"touchbar.stop" = "⏹️ 停止";
