@@ -218,7 +218,7 @@ final class RecordingManager: NSObject {
     // MARK: - Private Methods
 
     private func closePopover() {
-        NSApp.keyWindow?.close()
+        AppDelegate.shared?.closePopover()
     }
 
     @MainActor

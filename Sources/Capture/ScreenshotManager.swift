@@ -35,11 +35,41 @@ class ScreenshotManager {
         }
     }
 
+    // MARK: - Permission Check
+
+    private func ensureScreenCapturePermission() -> Bool {
+        if CGPreflightScreenCaptureAccess() {
+            return true
+        }
+        CGRequestScreenCaptureAccess()
+        DispatchQueue.main.async {
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = L("error.screen_permission")
+            alert.informativeText = L("error.screen_permission_hint")
+            alert.addButton(withTitle: L("error.ok"))
+            alert.runModal()
+        }
+        return false
+    }
+
+    private func showError(_ message: String) {
+        DispatchQueue.main.async {
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = L("error.screenshot_failed")
+            alert.informativeText = message
+            alert.addButton(withTitle: L("error.ok"))
+            alert.runModal()
+        }
+    }
+
     // MARK: - 截图方法
 
     /// 截取区域
     func captureRegion() {
-        NSApp.keyWindow?.close()
+        guard ensureScreenCapturePermission() else { return }
+        AppDelegate.shared?.closePopover()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.showRegionSelector()
@@ -48,7 +78,8 @@ class ScreenshotManager {
 
     /// 截取窗口
     func captureWindow() {
-        NSApp.keyWindow?.close()
+        guard ensureScreenCapturePermission() else { return }
+        AppDelegate.shared?.closePopover()
 
         Task {
             do {
@@ -56,23 +87,31 @@ class ScreenshotManager {
                 let windows = content.windows.filter { $0.isOnScreen && ($0.title?.isEmpty ?? true) == false }
 
                 await MainActor.run {
-                    self.showWindowPicker(windows: windows)
+                    if windows.isEmpty {
+                        self.showError(L("error.no_windows"))
+                    } else {
+                        self.showWindowPicker(windows: windows)
+                    }
                 }
             } catch {
-                print("Error getting windows: \(error)")
+                showError(error.localizedDescription)
             }
         }
     }
 
     /// 截取全屏
     func captureFullScreen() {
-        NSApp.keyWindow?.close()
+        guard ensureScreenCapturePermission() else { return }
+        AppDelegate.shared?.closePopover()
 
         let doCapture = { [weak self] in
             Task {
                 do {
                     let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-                    guard let display = content.displays.first else { return }
+                    guard let display = content.displays.first else {
+                        self?.showError(L("error.no_display"))
+                        return
+                    }
 
                     let screenFrame = CGRect(x: 0, y: 0, width: display.width, height: display.height)
 
@@ -85,9 +124,11 @@ class ScreenshotManager {
                         await MainActor.run {
                             self?.handleScreenshot(image)
                         }
+                    } else {
+                        self?.showError(L("error.capture_failed"))
                     }
                 } catch {
-                    print("Error capturing: \(error)")
+                    self?.showError(error.localizedDescription)
                 }
             }
         }
@@ -125,6 +166,8 @@ class ScreenshotManager {
             [.bestResolution, .boundsIgnoreFraming]
         ) {
             handleScreenshot(image)
+        } else {
+            showError(L("error.capture_failed"))
         }
     }
 

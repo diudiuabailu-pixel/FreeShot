@@ -117,9 +117,13 @@
 "error.camera_permission" = "Camera permission not granted. Go to System Settings > Privacy & Security > Camera to enable FreeShot.";
 "error.mic_permission" = "Microphone permission not granted. Go to System Settings > Privacy & Security > Microphone to enable FreeShot.";
 "error.recording_failed" = "Recording Failed";
+"error.screenshot_failed" = "Screenshot Failed";
 "error.ok" = "OK";
 "error.empty_file" = "Recording file is empty or missing";
 "error.unknown_write" = "Unknown error occurred while writing file";
+"error.screen_permission_hint" = "Please grant screen recording permission in System Settings, then restart the app.";
+"error.no_windows" = "No capturable windows found.";
+"error.capture_failed" = "Failed to capture screen content.";
 
 // MARK: - Countdown
 "countdown.starting" = "Recording starting...";

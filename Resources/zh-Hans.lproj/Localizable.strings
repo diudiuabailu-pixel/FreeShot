@@ -117,9 +117,13 @@
 "error.camera_permission" = "未授予摄像头权限。请到 系统设置 > 隐私与安全性 > 摄像头 中开启 FreeShot。";
 "error.mic_permission" = "未授予麦克风权限。请到 系统设置 > 隐私与安全性 > 麦克风 中开启 FreeShot。";
 "error.recording_failed" = "录制失败";
+"error.screenshot_failed" = "截图失败";
 "error.ok" = "好";
 "error.empty_file" = "录制文件为空或不存在";
 "error.unknown_write" = "写入文件时发生未知错误";
+"error.screen_permission_hint" = "请在系统设置中授予屏幕录制权限，然后重启应用。";
+"error.no_windows" = "未找到可截取的窗口。";
+"error.capture_failed" = "截取屏幕内容失败。";
 
 // MARK: - Countdown
 "countdown.starting" = "即将开始录制...";

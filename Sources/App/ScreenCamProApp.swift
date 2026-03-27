@@ -14,7 +14,7 @@ struct FreeShotApp: App {
 }
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    static var shared: AppDelegate!
+    static var shared: AppDelegate?
 
     var statusItem: NSStatusItem?
     var popover: NSPopover?
@@ -70,12 +70,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func togglePopover() {
         guard let popover = popover, let button = statusItem?.button else { return }
-        
+
         if popover.isShown {
             popover.performClose(nil)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            // Ensure the popover window can become key so buttons work
+            popover.contentViewController?.view.window?.makeKey()
         }
+    }
+
+    func closePopover() {
+        popover?.performClose(nil)
     }
     
     func showRecordingIndicator() {
