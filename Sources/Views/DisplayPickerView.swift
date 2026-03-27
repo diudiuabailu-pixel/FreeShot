@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
 
 struct DisplayPickerView: View {
     @State private var displays: [(id: CGDirectDisplayID, name: String, width: Int, height: Int)] = []

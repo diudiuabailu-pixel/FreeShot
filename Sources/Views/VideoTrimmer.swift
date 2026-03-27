@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import AppKit
+import UniformTypeIdentifiers
 
 class VideoTrimmer {
     static let shared = VideoTrimmer()

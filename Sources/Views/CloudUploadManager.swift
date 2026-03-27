@@ -1,5 +1,6 @@
 import Foundation
 import AppKit
+import UniformTypeIdentifiers
 
 class CloudUploadManager {
     static let shared = CloudUploadManager()

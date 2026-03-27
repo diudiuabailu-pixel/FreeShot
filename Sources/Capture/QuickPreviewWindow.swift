@@ -1,4 +1,5 @@
 import AppKit
+import UniformTypeIdentifiers
 
 class QuickPreviewWindow: NSWindow {
     private var screenshotImage: NSImage

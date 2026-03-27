@@ -1,6 +1,7 @@
 import Foundation
 import AppKit
 import ScreenCaptureKit
+import UniformTypeIdentifiers
 
 class AutoScrollCaptureManager {
     static let shared = AutoScrollCaptureManager()

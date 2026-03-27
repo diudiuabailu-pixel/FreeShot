@@ -1,5 +1,6 @@
 import AppKit
 import ScreenCaptureKit
+import UniformTypeIdentifiers
 
 class WindowPickerWindow: NSWindow {
     private var tableView: NSTableView!

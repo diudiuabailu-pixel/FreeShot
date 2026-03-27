@@ -4,6 +4,7 @@ import AVFoundation
 import ScreenCaptureKit
 import CoreGraphics
 import ApplicationServices
+import UniformTypeIdentifiers
 
 final class RecordingManager: NSObject {
     static let shared = RecordingManager()
