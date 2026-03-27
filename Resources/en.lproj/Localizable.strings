@@ -147,6 +147,14 @@
 "gif.select_video" = "Select video to convert to GIF";
 "gif.save_title" = "Save GIF File";
 
+// MARK: - Tools
+"tools.title" = "Video Tools";
+"tools.trim_video" = "Trim Video";
+"tools.video_to_gif" = "Video to GIF";
+
+// MARK: - Preview Share
+"preview.share" = "Share";
+
 // MARK: - Touch Bar
 "touchbar.screenshot" = "Screenshot";
 "touchbar.window" = "Window";

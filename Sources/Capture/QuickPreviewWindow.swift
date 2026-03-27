@@ -83,12 +83,17 @@ class QuickPreviewWindow: NSWindow {
         let openButton = createButton(title: L("preview.open"), icon: "folder")
         openButton.target = self
         openButton.action = #selector(openInFinder)
-        
+
+        let shareButton = createButton(title: L("preview.share"), icon: "square.and.arrow.up")
+        shareButton.target = self
+        shareButton.action = #selector(shareImage(_:))
+
         buttonStack.addArrangedSubview(copyButton)
         buttonStack.addArrangedSubview(saveButton)
         buttonStack.addArrangedSubview(annotateButton)
         buttonStack.addArrangedSubview(ocrButton)
         buttonStack.addArrangedSubview(openButton)
+        buttonStack.addArrangedSubview(shareButton)
         
         container.addSubview(imageView)
         container.addSubview(buttonStack)
@@ -141,6 +146,11 @@ class QuickPreviewWindow: NSWindow {
     @objc private func openInFinder() {
         NSWorkspace.shared.activateFileViewerSelecting([screenshotURL])
         close()
+    }
+
+    @objc private func shareImage(_ sender: NSButton) {
+        let sharingPicker = NSSharingServicePicker(items: [screenshotURL])
+        sharingPicker.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
     }
     
     @objc private func openAnnotate() {

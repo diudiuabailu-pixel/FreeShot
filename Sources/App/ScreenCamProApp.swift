@@ -24,9 +24,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         AppDelegate.shared = self
         checkPermissions()
         setupStatusBarItem()
-        
+
         // 启动快捷键监听
         HotkeyManager.shared.startListening()
+
+        // 设置 Touch Bar（仅支持的机型）
+        if #available(macOS 10.12.2, *) {
+            NSApplication.shared.isAutomaticCustomizeTouchBarMenuItemEnabled = true
+        }
     }
     
     func applicationWillTerminate(_ notification: Notification) {
@@ -57,13 +62,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
         if let button = statusItem?.button {
-            button.image = NSImage(systemSymbolName: "video.fill", accessibilityDescription: "FreeShot")
+            button.image = NSImage(systemSymbolName: "camera.viewfinder", accessibilityDescription: "FreeShot")
             button.action = #selector(togglePopover)
             button.target = self
         }
         
         popover = NSPopover()
-        popover?.contentSize = NSSize(width: 280, height: 320)
+        popover?.contentSize = NSSize(width: 340, height: 480)
         popover?.behavior = .transient
         popover?.contentViewController = NSHostingController(rootView: PopoverView())
     }

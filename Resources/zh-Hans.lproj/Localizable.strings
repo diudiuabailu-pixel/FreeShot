@@ -147,6 +147,14 @@
 "gif.select_video" = "选择要转换为 GIF 的视频";
 "gif.save_title" = "保存 GIF 文件";
 
+// MARK: - Tools
+"tools.title" = "视频工具";
+"tools.trim_video" = "裁剪视频";
+"tools.video_to_gif" = "视频转 GIF";
+
+// MARK: - Preview Share
+"preview.share" = "分享";
+
 // MARK: - Touch Bar
 "touchbar.screenshot" = "📐 截图";
 "touchbar.window" = "🪟 窗口";

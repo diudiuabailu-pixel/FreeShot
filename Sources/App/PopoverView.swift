@@ -410,6 +410,50 @@ struct RecordingOptionsView: View {
                     manager.startFullScreenRecording(includeCamera: showCamera)
                 }
             }
+
+            Divider()
+                .padding(.vertical, 4)
+
+            // MARK: - Video Tools
+            GroupBox {
+                VStack(spacing: 0) {
+                    Button(action: {
+                        AppDelegate.shared?.closePopover()
+                        VideoTrimmer.shared.trimSelectedVideo { _ in }
+                    }) {
+                        HStack {
+                            Image(systemName: "scissors")
+                                .foregroundColor(.orange)
+                            Text(L("tools.trim_video"))
+                                .font(.system(size: 13))
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.vertical, 4)
+
+                    Divider()
+
+                    Button(action: {
+                        AppDelegate.shared?.closePopover()
+                        GifExporter.shared.convertVideoToGif { _ in }
+                    }) {
+                        HStack {
+                            Image(systemName: "photo.on.rectangle.angled")
+                                .foregroundColor(.purple)
+                            Text(L("tools.video_to_gif"))
+                                .font(.system(size: 13))
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.vertical, 4)
+                }
+            } label: {
+                Label(L("tools.title"), systemImage: "wrench.and.screwdriver")
+                    .font(.system(size: 12, weight: .medium))
+            }
+            .groupBoxStyle(DefaultGroupBoxStyle())
         }
         .onAppear(perform: syncFromManager)
     }
